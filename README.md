@@ -1,44 +1,86 @@
 # Whiskey Bent Social Poker
 
-Whiskey Bent Social Poker is a web-first social poker / sweepstakes platform designed around Gold Coins (GC) for entertainment play and Sweep Coins (SC) for promotional participation where permitted.
+Whiskey Bent Social Poker is a web-first social poker/sweepstakes platform designed around Gold Coins (GC) for entertainment play and Sweep Coins (SC) for promotional participation where permitted. This platform offers a cutting-edge and compliance-first poker experience.
 
-## Platform goals
-- No-Limit Hold'em
-- Pot-Limit Omaha
+---
+
+## 🎯 **Platform Goals**
+- Support for No-Limit Hold'em
+- Pot-Limit Omaha functionality
 - Sit & Go tournaments
 - Multi-table tournaments
-- Jurisdiction-aware eligibility
-- Dual-wallet ledger system
-- Web-first architecture
+- Jurisdiction-aware player eligibility
+- Dual-wallet ledger system for virtual currencies (GC and SC)
+- Web-first architecture for enhanced accessibility
 
-## Monorepo structure
-- `apps/web-player` — player-facing web app
-- `apps/web-admin` — admin portal
-- `apps/api` — backend API
-- `apps/realtime` — realtime gameplay gateway
-- `packages/database` — Prisma schema and DB package
-- `packages/types` — shared TypeScript types
-- `packages/ui` — shared UI components
-- `packages/poker-core` — poker domain logic
-- `packages/tournament-core` — tournament domain logic
-- `packages/compliance-rules` — compliance/jurisdiction rules
+---
 
-## Stack
-- pnpm workspaces
-- Turborepo
-- Next.js
-- NestJS
-- Prisma
-- PostgreSQL
-- Redis
-- TypeScript
+## 🏗️ **Monorepo Structure**
+This repository is structured as a monorepo using Turborepo to manage the following:
 
-## Getting started
-1. Install dependencies
-2. Copy `.env.example` to `.env`
-3. Start PostgreSQL
-4. Run Prisma migrations
-5. Start dev services
+### **Applications**
+- `apps/web-player` — Player-facing web app
+- `apps/web-admin` — Admin control portal
+- `apps/api` — Backend API for core functionalities
+- `apps/realtime` — Realtime gameplay gateway
 
-## Notes
-This project is intended as a compliance-first social poker platform with no direct real-money wagering.
+### **Packages**
+- `packages/database` — Prisma schema and shared database logic
+- `packages/types` — Shared TypeScript definitions
+- `packages/ui` — Reusable UI components
+- `packages/poker-core` — Poker domain logic and gameplay rules
+- `packages/tournament-core` — Tournament lifecycle management logic
+- `packages/compliance-rules` — Jurisdiction-specific compliance rules
+
+---
+
+## 🛠️ **Technology Stack**
+The platform leverages the following technology stack:
+
+- **Monorepo Management**: PNPM Workspaces, Turborepo
+- **Frontend**: Next.js
+- **Backend**: NestJS
+- **Database**: Prisma, PostgreSQL
+- **Real-time Support**: Redis
+- **Programming Language**: TypeScript
+
+---
+
+## 🚀 **Getting Started**
+Follow these steps to set up and run the platform locally:
+
+1. **Install Dependencies**: Run `pnpm install`.
+2. **Environment Variables**:
+   - Copy `.env.example` to `.env`.
+   - Fill in the necessary environment variables (e.g., database credentials).
+3. **Database Setup**:
+   - Start PostgreSQL.
+   - Run Prisma migrations using `pnpm prisma migrate dev`.
+4. **Start Development Services**:
+   - Launch all apps and services using `pnpm turbo dev`.
+
+---
+
+## 📄 **Notes**
+- This platform is **compliance-first** with no real-money wagering.
+- Designed for entertaining poker experiences while adhering to jurisdictional rules.
+
+---
+
+## 📜 **License**
+This repository is licensed under [Insert License Here]. Please review the LICENSE.md file for more information.
+
+---
+
+## 💡 **Future Enhancements**
+- **AI Integration**:
+  - Smart matchmaking and tournament scheduling.
+  - Real-time gameplay insights powered by AI.
+- **Improved Automation**:
+  - CI/CD pipelines for streamlined testing and deployment.
+- **Enhanced Testing**:
+  - Increase coverage for poker core and compliance rules.
+
+---
+
+For more details, refer to individual modules or contact the repository maintainer.
