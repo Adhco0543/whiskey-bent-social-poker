@@ -16,5 +16,6 @@
       "dependsOn": ["^test"],
       "outputs": ["coverage/**"]
     }
-  }
+  },
+  "globalDependencies": ["**/.env", "**/.env.local"]
 }

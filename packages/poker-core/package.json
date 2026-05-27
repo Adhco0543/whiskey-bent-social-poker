@@ -1,0 +1,21 @@
+{
+  "name": "@whiskey-bent/poker-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Poker game logic and rules engine",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "@whiskey-bent/types": "*"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "typescript": "^5.5.4"
+  }
+}

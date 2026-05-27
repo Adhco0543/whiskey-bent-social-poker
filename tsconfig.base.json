@@ -2,11 +2,19 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@whiskey-bent/types": ["packages/types/src"],
+      "@whiskey-bent/database": ["packages/database/src"],
+      "@whiskey-bent/ui": ["packages/ui/src"],
+      "@whiskey-bent/poker-core": ["packages/poker-core/src"],
+      "@whiskey-bent/tournament-core": ["packages/tournament-core/src"],
+      "@whiskey-bent/compliance-rules": ["packages/compliance-rules/src"]
+    }
   }
 }

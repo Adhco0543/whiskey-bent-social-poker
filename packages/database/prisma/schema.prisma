@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  username  String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  lastLoginAt DateTime?
+
+  wallet       Wallet?
+  bonuses      BonusRecord[]
+  sessions     GameSession[]
+  tournaments  TournamentRegistration[]
+
+  @@map("users")
+}
+
+// Wallet and Currency
+model Wallet {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  goldCoins     Int      @default(0)
+  sweepCoins    Int      @default(0)
+  totalSpent    Int      @default(0)
+  totalEarned   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
+// Bonuses - tracks sign-up and daily login bonuses
+model BonusRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // 'signup' or 'daily_login'
+  amount    Int      // Amount in coins
+  currency  String   // 'GC' or 'SC'
+  claimedAt DateTime @default(now())
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@map("bonus_records")
+}
+
+// Daily Login Tracking
+model DailyLogin {
+  id        String   @id @default(cuid())
+  userId    String
+  loginDate DateTime
+  claimedBonus Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, loginDate])
+  @@index([userId])
+  @@map("daily_logins")
+}
+
+// Game Sessions
+model GameSession {
+  id            String   @id @default(cuid())
+  userId        String
+  variant       String   // 'NLH' or 'PLO'
+  tableName     String
+  smallBlind    Int
+  bigBlind      Int
+  maxPlayers    Int
+  buyIn         Int
+  status        String   // 'active', 'completed', 'cancelled'
+  createdAt     DateTime @default(now())
+  endedAt       DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("game_sessions")
+}
+
+// Tournaments
+model Tournament {
+  id                String   @id @default(cuid())
+  name              String
+  variant           String   // 'NLH' or 'PLO'
+  status            String   // 'scheduled', 'in_progress', 'completed', 'cancelled'
+  buyIn             Int
+  prizePool         Int      @default(0)
+  maxPlayers        Int
+  registeredPlayers Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  startTime         DateTime
+  endTime           DateTime?
+
+  registrations TournamentRegistration[]
+
+  @@index([status])
+  @@map("tournaments")
+}
+
+model TournamentRegistration {
+  id           String   @id @default(cuid())
+  userId       String
+  tournamentId String
+  finishPosition Int?
+  prizeWon     Int      @default(0)
+  registeredAt DateTime @default(now())
+  completedAt  DateTime?
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tournamentId])
+  @@index([userId])
+  @@index([tournamentId])
+  @@map("tournament_registrations")
+}
+
+// Compliance
+model ComplianceRule {
+  id             String   @id @default(cuid())
+  jurisdiction   String
+  isActive       Boolean  @default(true)
+  maxStakeAmount Int?
+  maxBuyIn       Int?
+  ageRestriction Int      @default(18)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([jurisdiction])
+  @@map("compliance_rules")
+}
