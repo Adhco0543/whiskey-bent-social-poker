@@ -1,0 +1,28 @@
+{
+  "name": "whiskey-bent-social-poker",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "npm@11.14.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "build:prod": "turbo run build --filter=!web-admin --filter=!web-player",
+    "start": "node apps/api/dist/main.js",
+    "start:realtime": "node apps/realtime/dist/main.js",
+    "db:migrate": "cd packages/database && npm run migrate",
+    "db:studio": "cd packages/database && npm run studio",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "prepare:deploy": "npm install && npm run build:prod && npm run db:migrate"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.6",
+    "typescript": "^5.5.4"
+  }
+}

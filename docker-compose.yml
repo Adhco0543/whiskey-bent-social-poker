@@ -1,0 +1,43 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: whiskey-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-whiskey_bent}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-whiskey_bent}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - whiskey-network
+
+  # API and Realtime services will be run locally during development
+  # Uncomment below for production Docker deployment
+
+  # Redis (optional - for pub/sub and caching)
+  redis:
+    image: redis:7-alpine
+    container_name: whiskey-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - whiskey-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  whiskey-network:
+    driver: bridge

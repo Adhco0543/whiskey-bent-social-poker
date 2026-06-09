@@ -1,0 +1,49 @@
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
+# Copy package files
+COPY package.json package-lock.json ./
+COPY tsconfig.base.json ./
+COPY apps/realtime/package.json ./apps/realtime/
+COPY apps/realtime/tsconfig.json ./apps/realtime/
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY apps/realtime ./apps/realtime
+
+# Build
+RUN npm --workspace=@whiskey-bent/realtime run build
+
+# Runtime stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk add --no-cache tini
+
+# Copy built files from builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/realtime/dist ./dist
+COPY --from=builder /app/package.json ./
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+USER nodejs
+
+# Use tini to handle signals properly
+ENTRYPOINT ["/sbin/tini", "--"]
+
+# Start application
+EXPOSE 3001
+ENV NODE_ENV=production
+CMD ["node", "dist/main.js"]
