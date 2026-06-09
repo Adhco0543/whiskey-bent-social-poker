@@ -25,7 +25,7 @@ COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 
 # Build
-RUN npm run build --workspace=@whiskey-bent/api --workspace=@whiskey-bent/database --workspace=@whiskey-bent/types
+RUN npm run -w @whiskey-bent/api -w @whiskey-bent/database -w @whiskey-bent/types build
 
 # Runtime stage
 FROM node:20-alpine
