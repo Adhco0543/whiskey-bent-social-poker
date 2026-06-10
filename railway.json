@@ -8,5 +8,8 @@
     "startCommand": "node apps/api/dist/main.js",
     "restartPolicyType": "on_failure",
     "restartPolicyMaxRetries": 5
+  },
+  "nixpacks": {
+    "disabled": true
   }
 }
