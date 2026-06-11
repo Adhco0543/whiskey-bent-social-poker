@@ -8,7 +8,7 @@ RUN apk add --no-cache python3 make g++
 
 # Copy package files
 COPY package.json package-lock.json ./
-COPY tsconfig.base.json ./
+COPY tsconfig.base.json turbo.json ./
 COPY apps/api/package.json ./apps/api/
 COPY apps/api/tsconfig.json ./apps/api/
 COPY packages/database/package.json ./packages/database/
@@ -26,7 +26,6 @@ COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
-COPY turbo.json ./
 
 # Build using turbo (handles dependencies automatically)
 RUN npm run build
