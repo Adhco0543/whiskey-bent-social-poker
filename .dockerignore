@@ -17,7 +17,6 @@ pnpm-debug.log*
 .idea
 coverage
 .turbo
-turbo.json
 SETUP.md
 DEPLOYMENT.md
 GAMES_IMPLEMENTATION_PLAN.md
