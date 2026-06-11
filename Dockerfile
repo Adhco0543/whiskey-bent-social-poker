@@ -26,9 +26,10 @@ COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
+COPY turbo.json ./
 
-# Build
-RUN npm run -w @whiskey-bent/api -w @whiskey-bent/database -w @whiskey-bent/types -w @whiskey-bent/poker-core build
+# Build using turbo (handles dependencies automatically)
+RUN npm run build
 
 # Runtime stage
 FROM node:20-alpine
