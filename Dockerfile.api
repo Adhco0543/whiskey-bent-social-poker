@@ -15,6 +15,8 @@ COPY packages/database/package.json ./packages/database/
 COPY packages/database/tsconfig.json ./packages/database/
 COPY packages/types/package.json ./packages/types/
 COPY packages/types/tsconfig.json ./packages/types/
+COPY packages/poker-core/package.json ./packages/poker-core/
+COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 
 # Install dependencies
 RUN npm ci
@@ -23,9 +25,10 @@ RUN npm ci
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
+COPY packages/poker-core ./packages/poker-core
 
 # Build
-RUN npm run -w @whiskey-bent/api -w @whiskey-bent/database -w @whiskey-bent/types build
+RUN npm run -w @whiskey-bent/api -w @whiskey-bent/database -w @whiskey-bent/types -w @whiskey-bent/poker-core build
 
 # Runtime stage
 FROM node:20-alpine

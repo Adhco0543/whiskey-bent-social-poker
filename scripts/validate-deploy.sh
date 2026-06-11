@@ -12,9 +12,9 @@ echo ""
 echo "📌 Node.js version:"
 node --version
 
-# Check PNPM version
-echo "📌 PNPM version:"
-pnpm --version
+# Check npm version
+echo "📌 npm version:"
+npm --version
 
 # Check environment file
 echo ""
@@ -57,21 +57,21 @@ echo "🏗️  Build artifacts:"
 if [ -d "packages/database/dist" ]; then
   echo "✅ Database package built"
 else
-  echo "⚠️  Database package not built - run: pnpm build"
+  echo "⚠️  Database package not built - run: npm run build"
 fi
 
 if [ -d "apps/api/dist" ]; then
   echo "✅ API built"
 else
-  echo "⚠️  API not built - run: pnpm build"
+  echo "⚠️  API not built - run: npm run build"
 fi
 
 # Check TypeScript compilation
 echo ""
 echo "✓ Running TypeScript type check..."
-pnpm lint 2>/dev/null || echo "⚠️  Lint issues found - review and fix before deploying"
+npm run lint 2>/dev/null || echo "⚠️  Lint issues found - review and fix before deploying"
 
 echo ""
 echo "✅ Validation complete!"
 echo ""
-echo "🚀 Ready to deploy. Run: pnpm run prepare:deploy"
+echo "🚀 Ready to deploy. Run: npm run prepare:deploy"

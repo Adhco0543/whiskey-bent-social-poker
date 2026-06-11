@@ -14,7 +14,7 @@ import { Server, Socket } from 'socket.io';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server!: Server;
+  server: Server = {} as Server;
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);

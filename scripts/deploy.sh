@@ -28,32 +28,32 @@ echo "✅ Environment variables validated"
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-pnpm install --frozen-lockfile
+npm ci
 
 # Build workspace packages first
 echo "🔨 Building workspace packages..."
 cd packages/database
-pnpm build
+npm run build
 cd ../types
-pnpm build
+npm run build
 cd ../ui
-pnpm build
+npm run build
 cd ../poker-core
-pnpm build
+npm run build
 cd ../tournament-core
-pnpm build
+npm run build
 cd ../compliance-rules
-pnpm build
+npm run build
 cd ../..
 
 # Build applications
 echo "🏗️  Building applications..."
-pnpm build:prod
+npm run build:prod
 
 # Run database migrations
 echo "🗄️  Running database migrations..."
 cd packages/database
-pnpm run migrate -- --skip-generate
+npm run migrate -- --skip-generate
 cd ../..
 
 echo "✅ Deployment preparation complete!"
@@ -64,5 +64,5 @@ echo "  2. Review database migrations"
 echo "  3. Deploy to your infrastructure"
 echo ""
 echo "🚀 To start services:"
-echo "  - API:     pnpm run start"
-echo "  - Realtime: pnpm run start:realtime"
+echo "  - API:     npm run start"
+echo "  - Realtime: npm run start:realtime"
