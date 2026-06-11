@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: whiskey-api
+    runtime: docker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        scope: env_specific
+      - key: JWT_SECRET
+        scope: env_specific
+      - key: REALTIME_PORT
+        value: "3001"
+      - key: PORT
+        value: "3000"
