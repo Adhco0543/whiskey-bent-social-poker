@@ -21,14 +21,14 @@ COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 # Install dependencies
 RUN npm ci
 
-# Generate Prisma client (must be done as root in build stage)
-RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
-
-# Copy source code
+# Copy source code FIRST (needed for Prisma schema path)
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
+
+# Generate Prisma client (must be done as root in build stage, after schema.prisma is copied)
+RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
 
 # Build using turbo (handles dependencies automatically)
 RUN npm run build
