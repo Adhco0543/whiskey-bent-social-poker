@@ -32,9 +32,12 @@ COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
+# Generate Prisma client BEFORE TypeScript build (needed by PrismaService import)
+RUN sh -c 'DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npx prisma generate --schema=./packages/database/prisma/schema.prisma'
+
 # Build using turbo (handles dependencies automatically)
-# Pass DATABASE_URL inline to ensure it's available during build
-RUN sh -c 'DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npm run build'
+# DATABASE_URL already set in ENV
+RUN npm run build
 
 # Runtime stage
 FROM node:20-alpine
@@ -46,6 +49,7 @@ RUN apk add --no-cache tini openssl
 
 # Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/packages/database/dist ./packages/database/dist
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
@@ -69,7 +73,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start application with Prisma setup and migrations
+# Start application with migrations only (Prisma client already generated in build stage)
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "npx prisma generate --schema=./packages/database/prisma/schema.prisma && npx prisma db push --skip-generate --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
+CMD sh -c "npx prisma db push --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
