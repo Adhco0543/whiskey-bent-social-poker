@@ -33,12 +33,12 @@ COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
 # Generate Prisma client BEFORE TypeScript build (needed by PrismaService import)
-# Set DATABASE_URL directly in RUN command to ensure Prisma can validate schema
-RUN DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npx prisma generate --schema=./packages/database/prisma/schema.prisma
+# Set DATABASE_URL in shell so it's available to subprocesses
+RUN sh -c 'export DATABASE_URL="postgresql://user:password@localhost:5432/dummy" && npx prisma generate --schema=./packages/database/prisma/schema.prisma'
 
 # Build using turbo (handles dependencies automatically)
 # Ensure DATABASE_URL is available for any build-time Prisma operations
-RUN DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npm run build
+RUN sh -c 'export DATABASE_URL="postgresql://user:password@localhost:5432/dummy" && npm run build'
 
 # Runtime stage
 FROM node:20-alpine
