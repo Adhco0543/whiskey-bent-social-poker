@@ -6,6 +6,7 @@ WORKDIR /app
 # Build-time argument for Prisma schema validation
 ARG DATABASE_URL=postgresql://user:password@localhost:5432/dummy
 ENV DATABASE_URL=$DATABASE_URL
+ENV PRISMA_SKIP_VALIDATION=true
 ENV PRISMA_SKIP_ENGINE_CHECK=true
 
 # Install build dependencies (including openssl for Prisma)
