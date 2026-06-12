@@ -3,8 +3,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apk add --no-cache python3 make g++
+# Install build dependencies (including openssl for Prisma)
+RUN apk add --no-cache python3 make g++ openssl
 
 # Copy package files
 COPY package.json package-lock.json ./
@@ -38,8 +38,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install runtime dependencies
-RUN apk add --no-cache tini
+# Install runtime dependencies (including openssl for Prisma)
+RUN apk add --no-cache tini openssl
 
 # Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
@@ -69,4 +69,5 @@ ENTRYPOINT ["/sbin/tini", "--"]
 # Start application with migrations
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "npx prisma migrate deploy --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
+ENV PRISMA_SKIP_ENGINE_CHECK=true
+CMD sh -c "npx prisma db push --skip-generate --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
