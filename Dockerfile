@@ -3,6 +3,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Build-time argument for Prisma schema validation
+ARG DATABASE_URL=postgresql://user:password@localhost:5432/dummy
+ENV DATABASE_URL=$DATABASE_URL
+
 # Install build dependencies (including openssl for Prisma)
 RUN apk add --no-cache python3 make g++ openssl
 
@@ -21,10 +25,7 @@ COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 # Install dependencies
 RUN npm ci
 
-# Copy .env.build for Prisma schema validation during build
-COPY .env.build .env
-
-# Copy source code FIRST (needed for Prisma schema path)
+# Copy source code (needed for Prisma schema path)
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
