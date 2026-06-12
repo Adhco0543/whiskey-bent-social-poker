@@ -27,6 +27,9 @@ COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 # Install dependencies
 RUN npm ci
 
+# Copy .env.example as .env for Prisma schema validation during build
+COPY .env.example .env
+
 # Copy source code (needed for TypeScript build)
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
@@ -65,6 +68,9 @@ RUN chmod -R 755 /app && \
     chown -R nodejs:nodejs /app/node_modules && \
     chown -R nodejs:nodejs /app/dist 2>/dev/null || true && \
     chown -R nodejs:nodejs /app/packages 2>/dev/null || true
+
+# Remove any .env files from build stage (runtime will use Render's env vars)
+RUN rm -f /app/.env /app/.env.* 2>/dev/null || true
 
 USER nodejs
 
