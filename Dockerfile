@@ -27,6 +27,9 @@ COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
+# Set dummy DATABASE_URL for Prisma schema validation during build
+ENV DATABASE_URL="postgresql://user:password@localhost:5432/dummy"
+
 # Generate Prisma client (must be done as root in build stage, after schema.prisma is copied)
 RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
 
