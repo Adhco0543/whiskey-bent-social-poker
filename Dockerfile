@@ -59,7 +59,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start application
+# Start application with migrations
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD ["node", "dist/main.js"]
+CMD sh -c "npx prisma migrate deploy && node dist/main.js"
