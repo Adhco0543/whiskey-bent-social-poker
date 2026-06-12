@@ -32,11 +32,13 @@ COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
+# Copy .env file for Prisma validation (using dummy DATABASE_URL)
+COPY .env.docker .env
+
 # Generate Prisma client BEFORE TypeScript build (needed by PrismaService import)
-RUN sh -c 'DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npx prisma generate --schema=./packages/database/prisma/schema.prisma'
+RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
 
 # Build using turbo (handles dependencies automatically)
-# DATABASE_URL already set in ENV
 RUN npm run build
 
 # Runtime stage
