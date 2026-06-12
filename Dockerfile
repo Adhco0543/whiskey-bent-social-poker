@@ -50,6 +50,9 @@ COPY --from=builder /app/package.json ./
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
+# Fix permissions for Prisma and node_modules
+RUN chown -R nodejs:nodejs /app
+
 USER nodejs
 
 # Health check
