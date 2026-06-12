@@ -21,6 +21,9 @@ COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 # Install dependencies
 RUN npm ci
 
+# Copy .env.build for Prisma schema validation during build
+COPY .env.build .env
+
 # Copy source code FIRST (needed for Prisma schema path)
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
