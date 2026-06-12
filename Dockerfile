@@ -21,6 +21,9 @@ COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 # Install dependencies
 RUN npm ci
 
+# Generate Prisma client (must be done as root in build stage)
+RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
+
 # Copy source code
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
@@ -42,6 +45,7 @@ RUN apk add --no-cache tini
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/packages/database/dist ./packages/database/dist
+COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 COPY --from=builder /app/packages/types/dist ./packages/types/dist
 COPY --from=builder /app/packages/poker-core/dist ./packages/poker-core/dist
 COPY --from=builder /app/package.json ./
@@ -65,4 +69,4 @@ ENTRYPOINT ["/sbin/tini", "--"]
 # Start application with migrations
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "npx prisma migrate deploy && node dist/main.js"
+CMD sh -c "npx prisma migrate deploy --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
