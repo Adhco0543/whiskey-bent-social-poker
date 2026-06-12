@@ -6,6 +6,7 @@ WORKDIR /app
 # Build-time argument for Prisma schema validation
 ARG DATABASE_URL=postgresql://user:password@localhost:5432/dummy
 ENV DATABASE_URL=$DATABASE_URL
+ENV PRISMA_SKIP_ENGINE_CHECK=true
 
 # Install build dependencies (including openssl for Prisma)
 RUN apk add --no-cache python3 make g++ openssl
@@ -32,8 +33,8 @@ COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
 # Build using turbo (handles dependencies automatically)
-# Note: Prisma client generation will happen at runtime instead
-RUN npm run build
+# Pass DATABASE_URL inline to ensure it's available during build
+RUN sh -c 'DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npm run build'
 
 # Runtime stage
 FROM node:20-alpine
