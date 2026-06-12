@@ -26,19 +26,16 @@ COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 # Install dependencies
 RUN npm ci
 
-# Copy source code (needed for Prisma schema path)
+# Copy source code (needed for TypeScript build)
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
-# Generate Prisma client BEFORE TypeScript build (needed by PrismaService import)
-# Set DATABASE_URL in shell so it's available to subprocesses
-RUN sh -c 'export DATABASE_URL="postgresql://user:password@localhost:5432/dummy" && npx prisma generate --schema=./packages/database/prisma/schema.prisma'
-
 # Build using turbo (handles dependencies automatically)
-# Ensure DATABASE_URL is available for any build-time Prisma operations
-RUN sh -c 'export DATABASE_URL="postgresql://user:password@localhost:5432/dummy" && npm run build'
+# Skip Prisma generation during build - will do it at runtime when DATABASE_URL is available
+# The @prisma/client types from node_modules are sufficient for TypeScript compilation
+RUN npm run build
 
 # Runtime stage
 FROM node:20-alpine
@@ -62,8 +59,11 @@ COPY --from=builder /app/package.json ./
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Fix permissions for Prisma and node_modules
-RUN chown -R nodejs:nodejs /app
+# Fix permissions for Prisma and node_modules (so nodejs user can generate Prisma client at runtime)
+RUN chmod -R 755 /app && \
+    chown -R nodejs:nodejs /app/node_modules && \
+    chown -R nodejs:nodejs /app/dist 2>/dev/null || true && \
+    chown -R nodejs:nodejs /app/packages 2>/dev/null || true
 
 USER nodejs
 
@@ -74,7 +74,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start application with migrations only (Prisma client already generated in build stage)
+# Start application with Prisma setup and migrations
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "npx prisma db push --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
+CMD sh -c "npx prisma generate --schema=./packages/database/prisma/schema.prisma && npx prisma db push --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
