@@ -27,13 +27,8 @@ COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
-# Set dummy DATABASE_URL for Prisma schema validation during build
-ENV DATABASE_URL="postgresql://user:password@localhost:5432/dummy"
-
-# Generate Prisma client (must be done as root in build stage, after schema.prisma is copied)
-RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
-
 # Build using turbo (handles dependencies automatically)
+# Note: Prisma client generation will happen at runtime instead
 RUN npm run build
 
 # Runtime stage
@@ -69,8 +64,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start application with migrations
+# Start application with Prisma setup and migrations
 EXPOSE 3000
 ENV NODE_ENV=production
-ENV PRISMA_SKIP_ENGINE_CHECK=true
-CMD sh -c "npx prisma db push --skip-generate --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
+CMD sh -c "npx prisma generate --schema=./packages/database/prisma/schema.prisma && npx prisma db push --skip-generate --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
