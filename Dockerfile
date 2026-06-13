@@ -18,44 +18,35 @@ COPY .env.example .env
 # Copy package files
 COPY package.json package-lock.json ./
 COPY tsconfig.base.json turbo.json ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/api/tsconfig.json ./apps/api/
-COPY packages/database/package.json ./packages/database/
-COPY packages/database/tsconfig.json ./packages/database/
-COPY packages/types/package.json ./packages/types/
-COPY packages/types/tsconfig.json ./packages/types/
-COPY packages/poker-core/package.json ./packages/poker-core/
-COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 
-# Install dependencies (Prisma will have access to .env now)
-# Use --ignore-scripts to skip post-install hooks (including Prisma generation)
-RUN npm ci --ignore-scripts
+# Copy ALL packages (app and library package.json + tsconfig files)
+COPY apps ./apps
+COPY packages ./packages
 
-# Rebuild optional dependencies (for native modules) but skip Prisma generation
-RUN npm rebuild --ignore-scripts 2>/dev/null || true
+# Install dependencies
+# Use --legacy-peer-deps to avoid peer dependency conflicts
+RUN npm ci --legacy-peer-deps 2>&1 | tail -20
 
 # Copy Prisma schema (needed for client generation)
 COPY packages/database/prisma ./packages/database/prisma
 
-# Generate Prisma client types explicitly (with env vars already set above)
-RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
+# Generate Prisma client types explicitly
+RUN echo "Generating Prisma client types..." && \
+    npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
+    echo "✓ Prisma client generated successfully" && \
+    ls -la node_modules/@prisma/client/index.d.ts || echo "⚠️ @prisma/client/index.d.ts not found"
 
-# Copy source code (needed for TypeScript build)
-COPY apps/api ./apps/api
-COPY packages/database ./packages/database
-COPY packages/types ./packages/types
-COPY packages/poker-core ./packages/poker-core
-COPY packages/compliance-rules ./packages/compliance-rules
-COPY packages/tournament-core ./packages/tournament-core
-COPY packages/ui ./packages/ui
-
-# Build using turbo (TypeScript will use @prisma/client types we just generated)
-RUN npm run build || (echo "===== BUILD FAILED =====" && \
+# Build the applications
+RUN echo "Starting build process..." && \
+    npm run build 2>&1 && \
+    echo "✓ Build completed successfully" || \
+    (echo "❌ Build FAILED - Collecting diagnostics..." && \
+    echo "=== apps/api directory ===" && \
     ls -la apps/api/ && \
-    echo "--- npm logs ---" && \
-    cat /root/.npm/_logs/* 2>/dev/null || echo "No npm logs found" && \
-    echo "--- checking node_modules ---" && \
-    ls -la node_modules/@prisma/client 2>/dev/null || echo "@prisma/client not found" && \
+    echo "=== Checking for dist dirs ===" && \
+    find apps -maxdepth 2 -name "dist" -type d && \
+    echo "=== npm logs ===" && \
+    (tail -100 /root/.npm/_logs/*.log 2>/dev/null || echo "No npm logs") && \
     exit 1)
 
 # Runtime stage
@@ -66,15 +57,13 @@ WORKDIR /app
 # Install runtime dependencies (including openssl for Prisma)
 RUN apk add --no-cache tini openssl
 
-# Copy built files from builder
+# Copy built files from builder - Only the ones that were actually built
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/.prisma ./.prisma 2>/dev/null || true
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma 2>/dev/null || true
 COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/packages/database/dist ./packages/database/dist
-COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
-COPY --from=builder /app/packages/types/dist ./packages/types/dist
-COPY --from=builder /app/packages/poker-core/dist ./packages/poker-core/dist
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
