@@ -28,7 +28,11 @@ COPY packages/poker-core/package.json ./packages/poker-core/
 COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 
 # Install dependencies (Prisma will have access to .env now)
-RUN npm ci
+# Use --ignore-scripts to skip post-install hooks (including Prisma generation)
+RUN npm ci --ignore-scripts
+
+# Rebuild optional dependencies (for native modules) but skip Prisma generation
+RUN npm rebuild --ignore-scripts 2>/dev/null || true
 
 # Copy source code (needed for TypeScript build)
 COPY apps/api ./apps/api
