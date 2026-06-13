@@ -63,6 +63,12 @@ COPY --from=builder /app/apps/api/dist/ ./dist/
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
+# DEBUG: List what got copied
+RUN echo "=== Contents of /app/dist/ ===" && \
+    ls -la /app/dist/ && \
+    echo "=== Checking for main.js ===" && \
+    (test -f /app/dist/main.js && echo "✓ main.js found" || echo "✗ main.js NOT found")
+
 # Copy the startup script
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
