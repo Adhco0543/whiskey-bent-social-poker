@@ -63,14 +63,13 @@ COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
+# Copy the startup script
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
 # Remove any .env files from build stage (runtime will use Render's env vars)
 RUN rm -f /app/.env /app/.env.* && \
     chmod -R 755 /app
-
-# Create non-root user and set permissions
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 && \
-    chown -R nodejs:nodejs /app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
@@ -79,11 +78,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start application with Prisma setup
+# Start application
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "echo 'Working directory:' && pwd && \
-    echo 'Checking dist directory:' && ls -la dist/ && \
-    echo 'Running Prisma generate...' && npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
-    echo 'Running Prisma db push...' && npx prisma db push --schema=./packages/database/prisma/schema.prisma && \
-    echo 'Starting Node.js...' && exec node dist/main.js"
+CMD ["/app/docker-entrypoint.sh"]
