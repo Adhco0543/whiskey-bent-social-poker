@@ -57,22 +57,20 @@ WORKDIR /app
 # Install runtime dependencies (including openssl for Prisma)
 RUN apk add --no-cache tini openssl
 
-# Copy built files from builder - copy contents directly to /app/
+# Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
-# Copy compiled API app - copy the individual files from dist, not the directory itself
-COPY --from=builder /app/apps/api/dist/main.js ./
-COPY --from=builder /app/apps/api/dist/app.module.js ./
-COPY --from=builder /app/apps/api/dist/modules/ ./modules/
-COPY --from=builder /app/apps/api/dist/prisma/ ./prisma/
+# Copy compiled API - copy dist directory entirely
+# Using wildcard to copy contents of dist to dist/ in runtime image
+COPY --from=builder /app/apps/api/dist . 
 
 # DEBUG: List what got copied
 RUN echo "=== Contents of /app/ ===" && \
-    ls -la /app/ && \
+    ls -la /app | grep -E "^-|^d" && \
     echo "=== Checking for main.js ===" && \
-    (test -f /app/main.js && echo "✓ main.js found" || echo "✗ main.js NOT found")
+    (test -f main.js && echo "✓ main.js at /app/main.js" || echo "✗ NOT at /app/main.js")
 
 # Copy the startup script
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
