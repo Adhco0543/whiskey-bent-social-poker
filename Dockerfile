@@ -50,9 +50,13 @@ COPY packages/tournament-core ./packages/tournament-core
 COPY packages/ui ./packages/ui
 
 # Build using turbo (TypeScript will use @prisma/client types we just generated)
-RUN npm run build && \
-    ls -la apps/api/dist/ || echo "⚠️ WARNING: apps/api/dist not found after build" && \
-    find apps -name "main.js" || echo "⚠️ WARNING: No main.js files found"
+RUN npm run build || (echo "===== BUILD FAILED =====" && \
+    ls -la apps/api/ && \
+    echo "--- npm logs ---" && \
+    cat /root/.npm/_logs/* 2>/dev/null || echo "No npm logs found" && \
+    echo "--- checking node_modules ---" && \
+    ls -la node_modules/@prisma/client 2>/dev/null || echo "@prisma/client not found" && \
+    exit 1)
 
 # Runtime stage
 FROM node:20-alpine
