@@ -45,9 +45,14 @@ COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
+COPY packages/compliance-rules ./packages/compliance-rules
+COPY packages/tournament-core ./packages/tournament-core
+COPY packages/ui ./packages/ui
 
 # Build using turbo (TypeScript will use @prisma/client types we just generated)
-RUN npm run build
+RUN npm run build && \
+    ls -la apps/api/dist/ || echo "⚠️ WARNING: apps/api/dist not found after build" && \
+    find apps -name "main.js" || echo "⚠️ WARNING: No main.js files found"
 
 # Runtime stage
 FROM node:20-alpine
@@ -92,4 +97,11 @@ ENTRYPOINT ["/sbin/tini", "--"]
 # Start application with Prisma setup and migrations
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "npx prisma generate --schema=./packages/database/prisma/schema.prisma && npx prisma db push --schema=./packages/database/prisma/schema.prisma && node dist/main.js"
+CMD sh -c "echo 'Checking build output...' && \
+    (ls -la dist/main.js || echo '❌ ERROR: dist/main.js not found! Build output is missing.') && \
+    echo 'Starting Prisma setup...' && \
+    npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
+    echo 'Running migrations...' && \
+    npx prisma db push --schema=./packages/database/prisma/schema.prisma && \
+    echo 'Starting API server...' && \
+    node dist/main.js"
