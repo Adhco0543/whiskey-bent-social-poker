@@ -9,11 +9,11 @@ export class ComplianceEngine {
   private rules: Map<string, any> = new Map();
 
   constructor(initialRules: Record<string, any> = {}) {
-    this.rules.set('*', { ...this.DEFAULT_RULES, ...initialRules });
+    this.rules.set('*', { ...ComplianceEngine.DEFAULT_RULES, ...initialRules });
   }
 
   addJurisdictionRules(jurisdiction: string, rules: Record<string, any>): void {
-    this.rules.set(jurisdiction, { ...this.DEFAULT_RULES, ...rules });
+    this.rules.set(jurisdiction, { ...ComplianceEngine.DEFAULT_RULES, ...rules });
   }
 
   getRules(jurisdiction: string): Record<string, any> {

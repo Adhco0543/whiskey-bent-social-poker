@@ -30,9 +30,11 @@ export const Card = ({
 export const Badge = ({
   children,
   variant = 'primary',
+  className,
 }: {
   children: React.ReactNode;
   variant?: 'primary' | 'success' | 'warning' | 'danger';
+  className?: string;
 }) => {
   const variants: Record<string, string> = {
     primary: 'bg-blue-100 text-blue-800',
@@ -42,7 +44,7 @@ export const Badge = ({
   };
 
   return (
-    <span className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${variants[variant]}`}>
+    <span className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${className || variants[variant]}`}>
       {children}
     </span>
   );
