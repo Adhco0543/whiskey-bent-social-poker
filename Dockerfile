@@ -59,7 +59,7 @@ RUN apk add --no-cache tini openssl
 
 # Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/apps/api/dist/ ./dist/
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
