@@ -62,9 +62,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
-# Copy compiled API - copy dist directory entirely
-# Using wildcard to copy contents of dist to dist/ in runtime image
-COPY --from=builder /app/apps/api/dist . 
+# Copy compiled API - copy dist directory contents to /app
+# Trailing slash copies the CONTENTS of dist, not the dist directory itself
+COPY --from=builder /app/apps/api/dist/ /app/
 
 # DEBUG: List what got copied
 RUN echo "=== Contents of /app/ ===" && \
