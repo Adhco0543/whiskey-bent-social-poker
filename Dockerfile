@@ -38,8 +38,8 @@ RUN npm rebuild --ignore-scripts 2>/dev/null || true
 COPY packages/database/prisma ./packages/database/prisma
 
 # Generate Prisma client for TypeScript compilation
-# Pass DATABASE_URL explicitly on command line to ensure Prisma finds it
-RUN DATABASE_URL="postgresql://user:password@localhost:5432/dummy" npx prisma generate --schema=./packages/database/prisma/schema.prisma
+# Use sh -c to properly export env vars for Prisma
+RUN sh -c 'export DATABASE_URL="postgresql://user:password@localhost:5432/dummy" && export PRISMA_SKIP_VALIDATION=true && npx prisma generate --schema=./packages/database/prisma/schema.prisma'
 
 # Copy source code (needed for TypeScript build)
 COPY apps/api ./apps/api
