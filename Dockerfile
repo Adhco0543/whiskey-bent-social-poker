@@ -63,20 +63,14 @@ COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-# Fix permissions for Prisma and node_modules (so nodejs user can generate Prisma client at runtime)
-RUN chmod -R 755 /app && \
-    chown -R nodejs:nodejs /app/node_modules && \
-    chown -R nodejs:nodejs /app/dist 2>/dev/null || true && \
-    chown -R nodejs:nodejs /app/packages 2>/dev/null || true
-
 # Remove any .env files from build stage (runtime will use Render's env vars)
-RUN rm -f /app/.env /app/.env.* 2>/dev/null || true
+RUN rm -f /app/.env /app/.env.* && \
+    chmod -R 755 /app
 
-USER nodejs
+# Create non-root user and set permissions
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
@@ -85,14 +79,9 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start application with Prisma setup and migrations
+# Start application with Prisma setup
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "echo 'Checking build output...' && \
-    (ls -la dist/main.js || echo '❌ ERROR: dist/main.js not found! Build output is missing.') && \
-    echo 'Starting Prisma setup...' && \
-    npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
-    echo 'Running migrations...' && \
+CMD sh -c "npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
     npx prisma db push --schema=./packages/database/prisma/schema.prisma && \
-    echo 'Starting API server...' && \
-    node dist/main.js"
+    exec node dist/main.js"
