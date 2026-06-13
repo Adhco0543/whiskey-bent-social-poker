@@ -6,10 +6,10 @@ echo "Working directory: $(pwd)"
 echo ""
 
 echo "====== Checking build artifacts ======"
-echo "Listing dist/ contents:"
-ls -la dist/
+echo "Listing /app contents:"
+ls -la /app | head -20
 echo ""
 
-echo "Attempting to execute: node dist/main.js"
-exec node dist/main.js
+echo "Attempting to execute: node main.js"
+exec node main.js
 
