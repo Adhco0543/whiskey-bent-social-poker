@@ -34,22 +34,14 @@ RUN npm ci --ignore-scripts
 # Rebuild optional dependencies (for native modules) but skip Prisma generation
 RUN npm rebuild --ignore-scripts 2>/dev/null || true
 
-# Copy prisma schema (needed for client generation)
-COPY packages/database/prisma ./packages/database/prisma
-
-# Generate Prisma client for TypeScript compilation
-# Use sh -c to properly export env vars for Prisma
-RUN sh -c 'export DATABASE_URL="postgresql://user:password@localhost:5432/dummy" && export PRISMA_SKIP_VALIDATION=true && npx prisma generate --schema=./packages/database/prisma/schema.prisma'
-
 # Copy source code (needed for TypeScript build)
+# @prisma/client types are already available in node_modules from npm ci
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
-# Build using turbo (handles dependencies automatically)
-# Skip Prisma generation during build - will do it at runtime when DATABASE_URL is available
-# The @prisma/client types from node_modules are sufficient for TypeScript compilation
+# Build using turbo (TypeScript will use @prisma/client types from node_modules)
 RUN npm run build
 
 # Runtime stage
