@@ -34,6 +34,9 @@ RUN npm ci --ignore-scripts
 # Rebuild optional dependencies (for native modules) but skip Prisma generation
 RUN npm rebuild --ignore-scripts 2>/dev/null || true
 
+# Copy prisma schema (needed for client generation)
+COPY packages/database/prisma ./packages/database/prisma
+
 # Generate Prisma client for TypeScript compilation (schema validation still skipped via ENV)
 RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
 
