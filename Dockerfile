@@ -12,6 +12,9 @@ ENV PRISMA_SKIP_ENGINE_CHECK=true
 # Install build dependencies (including openssl for Prisma)
 RUN apk add --no-cache python3 make g++ openssl
 
+# Copy .env.example as .env FIRST for Prisma to find DATABASE_URL during entire build
+COPY .env.example .env
+
 # Copy package files
 COPY package.json package-lock.json ./
 COPY tsconfig.base.json turbo.json ./
@@ -24,11 +27,8 @@ COPY packages/types/tsconfig.json ./packages/types/
 COPY packages/poker-core/package.json ./packages/poker-core/
 COPY packages/poker-core/tsconfig.json ./packages/poker-core/
 
-# Install dependencies
+# Install dependencies (Prisma will have access to .env now)
 RUN npm ci
-
-# Copy .env.example as .env for Prisma schema validation during build
-COPY .env.example .env
 
 # Copy source code (needed for TypeScript build)
 COPY apps/api ./apps/api
