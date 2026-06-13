@@ -60,18 +60,18 @@ RUN apk add --no-cache tini openssl
 # Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder /app/packages/database/prisma ./prisma
 
-# Copy compiled API - keep dist directory structure intact
-COPY --from=builder /app/apps/api/dist ./dist
+# Copy compiled API - only the API dist folder
+COPY --from=builder /app/apps/api/dist/ ./
 
 # DEBUG: List what got copied
 RUN echo "=== Contents of /app/ ===" && \
     ls -la /app && \
-    echo "=== Contents of /app/dist ===" && \
-    ls -la /app/dist && \
     echo "=== Checking for main.js ===" && \
-    (test -f dist/main.js && echo "✓ main.js at /app/dist/main.js" || echo "✗ NOT at /app/dist/main.js")
+    (test -f /app/main.js && echo "✓ main.js at /app/main.js" || echo "✗ NOT at /app/main.js") && \
+    echo "=== Checking dist contents ===" && \
+    ls -la dist/ 2>/dev/null || echo "(no dist directory)"
 
 # Copy the startup script
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
