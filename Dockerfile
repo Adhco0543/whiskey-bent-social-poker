@@ -62,15 +62,16 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
 
-# Copy compiled API - copy dist directory contents to /app
-# Trailing slash copies the CONTENTS of dist, not the dist directory itself
-COPY --from=builder /app/apps/api/dist/ /app/
+# Copy compiled API - keep dist directory structure intact
+COPY --from=builder /app/apps/api/dist ./dist
 
 # DEBUG: List what got copied
 RUN echo "=== Contents of /app/ ===" && \
-    ls -la /app | grep -E "^-|^d" && \
+    ls -la /app && \
+    echo "=== Contents of /app/dist ===" && \
+    ls -la /app/dist && \
     echo "=== Checking for main.js ===" && \
-    (test -f main.js && echo "✓ main.js at /app/main.js" || echo "✗ NOT at /app/main.js")
+    (test -f dist/main.js && echo "✓ main.js at /app/dist/main.js" || echo "✗ NOT at /app/dist/main.js")
 
 # Copy the startup script
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
