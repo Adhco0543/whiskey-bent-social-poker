@@ -34,14 +34,19 @@ RUN npm ci --ignore-scripts
 # Rebuild optional dependencies (for native modules) but skip Prisma generation
 RUN npm rebuild --ignore-scripts 2>/dev/null || true
 
+# Copy Prisma schema (needed for client generation)
+COPY packages/database/prisma ./packages/database/prisma
+
+# Generate Prisma client types explicitly (with env vars already set above)
+RUN npx prisma generate --schema=./packages/database/prisma/schema.prisma
+
 # Copy source code (needed for TypeScript build)
-# @prisma/client types are already available in node_modules from npm ci
 COPY apps/api ./apps/api
 COPY packages/database ./packages/database
 COPY packages/types ./packages/types
 COPY packages/poker-core ./packages/poker-core
 
-# Build using turbo (TypeScript will use @prisma/client types from node_modules)
+# Build using turbo (TypeScript will use @prisma/client types we just generated)
 RUN npm run build
 
 # Runtime stage
