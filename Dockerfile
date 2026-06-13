@@ -82,6 +82,8 @@ ENTRYPOINT ["/sbin/tini", "--"]
 # Start application with Prisma setup
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD sh -c "npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
-    npx prisma db push --schema=./packages/database/prisma/schema.prisma && \
-    exec node dist/main.js"
+CMD sh -c "echo 'Working directory:' && pwd && \
+    echo 'Checking dist directory:' && ls -la dist/ && \
+    echo 'Running Prisma generate...' && npx prisma generate --schema=./packages/database/prisma/schema.prisma && \
+    echo 'Running Prisma db push...' && npx prisma db push --schema=./packages/database/prisma/schema.prisma && \
+    echo 'Starting Node.js...' && exec node dist/main.js"
