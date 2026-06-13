@@ -57,10 +57,8 @@ WORKDIR /app
 # Install runtime dependencies (including openssl for Prisma)
 RUN apk add --no-cache tini openssl
 
-# Copy built files from builder - Only the ones that were actually built
+# Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.prisma ./.prisma 2>/dev/null || true
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma 2>/dev/null || true
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
