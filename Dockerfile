@@ -36,7 +36,7 @@ RUN echo "Generating Prisma client types..." && \
     echo "✓ Prisma client generated successfully" && \
     ls -la node_modules/@prisma/client/index.d.ts || echo "⚠️ @prisma/client/index.d.ts not found"
 
-# Build the applications
+# Build the applications (must specify database first since api depends on it)
 RUN echo "Starting build process..." && \
     npm run build 2>&1 && \
     echo "✓ Build completed successfully" || \
@@ -44,7 +44,9 @@ RUN echo "Starting build process..." && \
     echo "=== apps/api directory ===" && \
     ls -la apps/api/ && \
     echo "=== Checking for dist dirs ===" && \
-    find apps -maxdepth 2 -name "dist" -type d && \
+    find apps packages -maxdepth 2 -name "dist" -type d && \
+    echo "=== node_modules/@whiskey-bent ===" && \
+    ls -la node_modules/@whiskey-bent 2>/dev/null || echo "No @whiskey-bent in node_modules" && \
     echo "=== npm logs ===" && \
     (tail -100 /root/.npm/_logs/*.log 2>/dev/null || echo "No npm logs") && \
     exit 1)
@@ -68,23 +70,26 @@ RUN apk add --no-cache tini openssl
 # Copy built files from builder
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
 COPY --from=builder /app/packages/database/prisma ./prisma
 
 # Copy entire apps/api directory (with dist subdirectory)
 COPY --from=builder /app/apps/api ./apps/api
 
-# Copy all packages (including compiled dist directories for workspace dependencies)
+# Copy all packages including source and compiled dist (needed for workspace package resolution)
 COPY --from=builder /app/packages ./packages
 
-# DEBUG: List what got copied
-RUN echo "=== Contents of /app/ ===" && \
+# DEBUG: List what got copied and verify module resolution
+RUN echo "=== Verifying container setup ===" && \
     ls -la /app && \
-    echo "=== Contents of /app/apps/api ===" && \
-    ls -la /app/apps/api && \
-    echo "=== Contents of /app/apps/api/dist ===" && \
-    ls -la /app/apps/api/dist && \
+    echo "=== node_modules/@whiskey-bent ===" && \
+    ls -la node_modules/@whiskey-bent 2>&1 && \
+    echo "=== packages/database structure ===" && \
+    ls -la packages/database 2>&1 && \
+    echo "=== packages/database/dist ===" && \
+    ls -la packages/database/dist 2>&1 || echo "dist not found" && \
     echo "=== Checking for main.js ===" && \
-    (test -f /app/apps/api/dist/main.js && echo "✓ main.js found at /app/apps/api/dist/main.js" || echo "✗ main.js NOT found")
+    (test -f /app/apps/api/dist/main.js && echo "✓ main.js found" || echo "✗ main.js NOT found")
 
 # Copy the startup script
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
