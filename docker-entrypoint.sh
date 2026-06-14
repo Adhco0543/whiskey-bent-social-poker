@@ -9,10 +9,11 @@ echo "====== Checking build artifacts ======"
 echo "Listing /app contents:"
 ls -la /app
 echo ""
-echo "Looking for main.js:"
-ls -la main.js 2>/dev/null || echo "NOT FOUND"
+
+echo "Listing /app/apps/api/dist contents:"
+ls -la /app/apps/api/dist 2>/dev/null || echo "dist directory not found"
 echo ""
 
-echo "Attempting to execute: node main.js"
-exec node main.js
+echo "Attempting to execute: node /app/apps/api/dist/main.js"
+exec node /app/apps/api/dist/main.js
 

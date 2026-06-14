@@ -49,6 +49,10 @@ RUN echo "Starting build process..." && \
     (tail -100 /root/.npm/_logs/*.log 2>/dev/null || echo "No npm logs") && \
     exit 1)
 
+# Inspect the dist directory structure in builder
+RUN echo "=== Inspecting builder /app/apps/api/dist ===" && \
+    ls -la /app/apps/api/dist 2>&1 || echo "dist not found"
+
 # Runtime stage
 FROM node:20-alpine
 
@@ -62,16 +66,18 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/database/prisma ./prisma
 
-# Copy compiled API - only the API dist folder
-COPY --from=builder /app/apps/api/dist/ ./
+# Copy entire apps/api directory (with dist subdirectory)
+COPY --from=builder /app/apps/api ./apps/api
 
 # DEBUG: List what got copied
 RUN echo "=== Contents of /app/ ===" && \
     ls -la /app && \
+    echo "=== Contents of /app/apps/api ===" && \
+    ls -la /app/apps/api && \
+    echo "=== Contents of /app/apps/api/dist ===" && \
+    ls -la /app/apps/api/dist && \
     echo "=== Checking for main.js ===" && \
-    (test -f /app/main.js && echo "✓ main.js at /app/main.js" || echo "✗ NOT at /app/main.js") && \
-    echo "=== Checking dist contents ===" && \
-    ls -la dist/ 2>/dev/null || echo "(no dist directory)"
+    (test -f /app/apps/api/dist/main.js && echo "✓ main.js found at /app/apps/api/dist/main.js" || echo "✗ main.js NOT found")
 
 # Copy the startup script
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
