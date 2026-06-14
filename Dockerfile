@@ -71,33 +71,25 @@ RUN apk add --no-cache tini openssl
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
-COPY --from=builder /app/packages/database/prisma ./prisma
-
-# Copy entire apps/api directory (with dist subdirectory)
-COPY --from=builder /app/apps/api ./apps/api
-
-# Copy all packages including source and compiled dist (needed for workspace package resolution)
 COPY --from=builder /app/packages ./packages
 
-# DEBUG: List what got copied and verify module resolution
-RUN echo "=== Verifying container setup ===" && \
+# Copy API compiled files - try direct dist content copy for clarity
+COPY --from=builder /app/apps/api/dist/ ./
+
+# Copy startup script
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
+# DEBUG: List what got copied
+RUN echo "=== /app contents ===" && \
     ls -la /app && \
-    echo "=== node_modules/@whiskey-bent ===" && \
-    ls -la node_modules/@whiskey-bent 2>&1 && \
-    echo "=== packages/database structure ===" && \
-    ls -la packages/database 2>&1 && \
-    echo "=== packages/database/dist ===" && \
-    ls -la packages/database/dist 2>&1 || echo "dist not found" && \
     echo "=== Checking for main.js ===" && \
-    (test -f /app/apps/api/dist/main.js && echo "✓ main.js found" || echo "✗ main.js NOT found")
+    (test -f main.js && echo "✓ Found: /app/main.js" || echo "✗ NOT found: /app/main.js") && \
+    echo "=== node_modules/@whiskey-bent ===" && \
+    ls -la node_modules/@whiskey-bent 2>&1 | head -10 || echo "No @whiskey-bent"
 
-# Copy the startup script
-COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/docker-entrypoint.sh
-
-# Remove any .env files from build stage (runtime will use Render's env vars)
-RUN rm -f /app/.env /app/.env.* && \
-    chmod -R 755 /app
+# Remove any .env files (runtime will use Render's env vars)
+RUN rm -f /app/.env /app/.env.* && chmod -R 755 /app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \

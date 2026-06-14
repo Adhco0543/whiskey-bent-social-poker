@@ -3,23 +3,22 @@ set -e
 
 echo "====== Container Startup ======"
 echo "Working directory: $(pwd)"
+echo "Listing /app:"
+ls -la /app | grep "main.js\|modules\|packages" || echo "No matches"
 echo ""
 
-echo "====== Checking build artifacts ======"
-echo "Listing /app contents:"
-ls -la /app
-echo ""
-
-echo "====== Searching for main.js ======"
-MAIN_JS=$(find /app -name "main.js" -type f 2>/dev/null | head -1)
-if [ -z "$MAIN_JS" ]; then
-  echo "ERROR: main.js not found anywhere in /app"
-  echo "=== Full directory tree ==="
-  find /app -type f -name "*.js" 2>/dev/null | head -30
+# Try to find and execute main.js
+if [ -f "/app/main.js" ]; then
+  echo "Found main.js at /app/main.js"
+  exec node /app/main.js
+elif [ -f "./main.js" ]; then
+  echo "Found main.js at ./main.js"
+  exec node ./main.js  
+else
+  echo "ERROR: main.js not found in /app"
+  echo "Full /app contents:"
+  ls -la /app
   exit 1
 fi
 
-echo "Found main.js at: $MAIN_JS"
-echo "Attempting to execute: node $MAIN_JS"
-exec node "$MAIN_JS"
 
