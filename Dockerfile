@@ -82,15 +82,22 @@ COPY --from=builder /app/apps/api ./apps/api
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
-# DEBUG: Verify file structure
-RUN echo "=== /app contents ===" && \
+# DEBUG: Verify file structure and dependencies
+RUN echo "=== /app directory contents ===" && \
     ls -la /app && \
-    echo "=== Checking for API dist ===" && \
-    ls -la /app/apps/api/dist 2>&1 | head -5 && \
-    echo "=== Checking for main.js ===" && \
-    (test -f /app/apps/api/dist/main.js && echo "✓ Found: /app/apps/api/dist/main.js" || echo "✗ NOT found") && \
-    echo "=== node_modules/@whiskey-bent ===" && \
-    ls -la node_modules/@whiskey-bent 2>&1 | head -5 || echo "No @whiskey-bent"
+    echo "" && \
+    echo "=== /app/apps/api/dist contents ===" && \
+    ls -la /app/apps/api/dist 2>&1 | head -20 && \
+    echo "" && \
+    echo "=== Checking main.js ===" && \
+    (test -f /app/apps/api/dist/main.js && echo "✓ main.js exists" || echo "✗ main.js NOT found") && \
+    echo "" && \
+    echo "=== Checking for critical dependencies ===" && \
+    (test -d node_modules/@nestjs/core && echo "✓ @nestjs/core exists" || echo "✗ @nestjs/core NOT found") && \
+    (test -d node_modules/@prisma/client && echo "✓ @prisma/client exists" || echo "✗ @prisma/client NOT found") && \
+    echo "" && \
+    echo "=== Node modules count ===" && \
+    find node_modules -maxdepth 1 -type d | wc -l
 
 # Remove any .env files (runtime will use Render's env vars)
 RUN rm -f /app/.env /app/.env.* && chmod -R 755 /app
