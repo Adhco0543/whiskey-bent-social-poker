@@ -67,26 +67,30 @@ WORKDIR /app
 # Install runtime dependencies (including openssl for Prisma)
 RUN apk add --no-cache tini openssl
 
-# Copy built files from builder
+# Copy built files from builder - copy everything needed for runtime
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
+
+# Copy workspace packages (needed for module resolution)
 COPY --from=builder /app/packages ./packages
 
-# Copy API compiled files - try direct dist content copy for clarity
-COPY --from=builder /app/apps/api/dist/ ./
+# Copy entire API app with dist directory intact
+COPY --from=builder /app/apps/api ./apps/api
 
 # Copy startup script
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
-# DEBUG: List what got copied
+# DEBUG: Verify file structure
 RUN echo "=== /app contents ===" && \
     ls -la /app && \
+    echo "=== Checking for API dist ===" && \
+    ls -la /app/apps/api/dist 2>&1 | head -5 && \
     echo "=== Checking for main.js ===" && \
-    (test -f main.js && echo "✓ Found: /app/main.js" || echo "✗ NOT found: /app/main.js") && \
+    (test -f /app/apps/api/dist/main.js && echo "✓ Found: /app/apps/api/dist/main.js" || echo "✗ NOT found") && \
     echo "=== node_modules/@whiskey-bent ===" && \
-    ls -la node_modules/@whiskey-bent 2>&1 | head -10 || echo "No @whiskey-bent"
+    ls -la node_modules/@whiskey-bent 2>&1 | head -5 || echo "No @whiskey-bent"
 
 # Remove any .env files (runtime will use Render's env vars)
 RUN rm -f /app/.env /app/.env.* && chmod -R 755 /app
