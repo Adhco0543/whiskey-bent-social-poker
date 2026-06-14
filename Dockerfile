@@ -73,6 +73,9 @@ COPY --from=builder /app/packages/database/prisma ./prisma
 # Copy entire apps/api directory (with dist subdirectory)
 COPY --from=builder /app/apps/api ./apps/api
 
+# Copy all packages (including compiled dist directories for workspace dependencies)
+COPY --from=builder /app/packages ./packages
+
 # DEBUG: List what got copied
 RUN echo "=== Contents of /app/ ===" && \
     ls -la /app && \
