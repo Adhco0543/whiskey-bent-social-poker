@@ -51,7 +51,11 @@ RUN echo "Starting build process..." && \
 
 # Inspect the dist directory structure in builder
 RUN echo "=== Inspecting builder /app/apps/api/dist ===" && \
-    ls -la /app/apps/api/dist 2>&1 || echo "dist not found"
+    ls -la /app/apps/api/dist 2>&1 || echo "dist not found" && \
+    echo "=== Finding main.js in entire /app/apps/api/dist tree ===" && \
+    find /app/apps/api/dist -name "main.js" -type f 2>/dev/null || echo "main.js not found anywhere" && \
+    echo "=== Full tree of /app/apps/api/dist ===" && \
+    find /app/apps/api/dist -type f -name "*.js" | head -20 || echo "no js files"
 
 # Runtime stage
 FROM node:20-alpine
