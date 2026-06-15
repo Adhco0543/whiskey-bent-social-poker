@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "build:prod": "turbo run build --filter=api --filter=realtime --filter=database",
+    "build:prod": "turbo run build --filter=@whiskey-bent/api --filter=@whiskey-bent/realtime --filter=@whiskey-bent/database",
     "start": "node apps/api/dist/main.js",
     "start:realtime": "node apps/realtime/dist/main.js",
     "db:migrate": "cd packages/database && npm run migrate",
