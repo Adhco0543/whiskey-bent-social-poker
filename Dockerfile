@@ -40,7 +40,10 @@ RUN echo "Generating Prisma client types..." && \
 # Step 1: Generate Prisma client (required before any build)
 # Step 2: Build ALL packages with turbo (handles dependency ordering automatically)
 RUN echo "Step 1: Building all workspace packages..." && \
-    npm run build 2>&1 && \
+    echo "=== Current directory ===" && pwd && \
+    echo "=== Checking package.json ===" && head -20 package.json && \
+    echo "=== Running: npm run build ===" && \
+    npm run build && \
     echo "✓ All packages built successfully"
 
 # Verify the API was built
