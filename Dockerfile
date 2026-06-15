@@ -36,8 +36,16 @@ RUN echo "Generating Prisma client types..." && \
     echo "✓ Prisma client generated successfully" && \
     ls -la node_modules/@prisma/client/index.d.ts || echo "⚠️ @prisma/client/index.d.ts not found"
 
-# Build the applications (must specify database first since api depends on it)
-RUN echo "Starting build process..." && \
+# Build packages FIRST (they are dependencies of the apps)
+# Use turbo's built-in dependency resolution
+RUN echo "Building workspace packages..." && \
+    npx turbo run build --filter=@whiskey-bent/database --filter=@whiskey-bent/types --filter=@whiskey-bent/poker-core --filter=@whiskey-bent/tournament-core --filter=@whiskey-bent/compliance-rules --filter=@whiskey-bent/ui 2>&1 && \
+    echo "✓ Workspace packages built" || \
+    (echo "⚠️ Some packages may have warnings, checking database package..." && \
+    ls -la packages/database/dist 2>&1 || echo "ERROR: packages/database/dist not found")
+
+# Now build the apps (which depend on the packages we just built)
+RUN echo "Starting build of applications..." && \
     npm run build 2>&1 && \
     echo "✓ Build completed successfully" || \
     (echo "❌ Build FAILED - Collecting diagnostics..." && \
@@ -83,20 +91,22 @@ COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
 # CRITICAL: Fix workspace symlinks - they may not copy correctly from builder
-# Check if @whiskey-bent packages exist in node_modules (they should be symlinks)
-# If they don't, recreate them by running npm ci again (lightweight - just recreates symlinks)
-RUN echo "Checking workspace package symlinks..." && \
-    if [ ! -d "node_modules/@whiskey-bent/database" ]; then \
-      echo "⚠️  Workspace symlinks not found, recreating with npm ci..."; \
-      npm ci --legacy-peer-deps 2>&1 | tail -5; \
-    else \
-      echo "✓ Workspace symlinks present"; \
-    fi && \
+# Docker COPY can preserve symlinks, but if copied as directories, npm ci won't fix them
+# Remove node_modules/@whiskey-bent if it exists (to force fresh link creation)
+RUN echo "Fixing workspace package symlinks..." && \
+    rm -rf node_modules/@whiskey-bent && \
+    echo "Running npm ci to recreate workspace symlinks..." && \
+    npm ci --legacy-peer-deps 2>&1 | tail -10 && \
+    echo "" && \
     echo "Verifying critical packages..." && \
-    (test -d node_modules/@whiskey-bent/database && echo "✓ @whiskey-bent/database" || echo "✗ @whiskey-bent/database MISSING") && \
-    (test -d node_modules/@whiskey-bent/poker-core && echo "✓ @whiskey-bent/poker-core" || echo "✗ @whiskey-bent/poker-core MISSING") && \
-    (test -d node_modules/@nestjs/core && echo "✓ @nestjs/core" || echo "✗ @nestjs/core MISSING") && \
-    (test -d node_modules/@prisma/client && echo "✓ @prisma/client" || echo "✗ @prisma/client MISSING")
+    (test -d node_modules/@whiskey-bent/database && echo "✓ @whiskey-bent/database exists" || echo "✗ @whiskey-bent/database MISSING") && \
+    (test -d node_modules/@whiskey-bent/poker-core && echo "✓ @whiskey-bent/poker-core exists" || echo "✗ @whiskey-bent/poker-core MISSING") && \
+    (test -d node_modules/@nestjs/core && echo "✓ @nestjs/core exists" || echo "✗ @nestjs/core MISSING") && \
+    (test -d node_modules/@prisma/client && echo "✓ @prisma/client exists" || echo "✗ @prisma/client MISSING") && \
+    echo "" && \
+    echo "Checking symlink targets..." && \
+    (ls -la node_modules/@whiskey-bent 2>&1 | head -5 || echo "Could not list @whiskey-bent") && \
+    echo ""
 
 # DEBUG: Verify file structure and dependencies
 RUN echo "" && \
