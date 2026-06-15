@@ -36,27 +36,34 @@ RUN echo "Generating Prisma client types..." && \
     echo "✓ Prisma client generated successfully" && \
     ls -la node_modules/@prisma/client/index.d.ts || echo "⚠️ @prisma/client/index.d.ts not found"
 
-# Build packages FIRST (they are dependencies of the apps)
-# Use turbo's built-in dependency resolution
-RUN echo "Building workspace packages..." && \
-    npx turbo run build --filter=@whiskey-bent/database --filter=@whiskey-bent/types --filter=@whiskey-bent/poker-core --filter=@whiskey-bent/tournament-core --filter=@whiskey-bent/compliance-rules --filter=@whiskey-bent/ui 2>&1 && \
-    echo "✓ Workspace packages built" || \
-    (echo "⚠️ Some packages may have warnings, checking database package..." && \
-    ls -la packages/database/dist 2>&1 || echo "ERROR: packages/database/dist not found")
+# Build workspace packages FIRST - they are critical dependencies
+# Build database package explicitly (most critical for the API)
+RUN echo "Step 1: Building @whiskey-bent/database package..." && \
+    cd packages/database && npm run build && cd ../.. && \
+    echo "✓ Database package built successfully" && \
+    (ls -la packages/database/dist/index.js || echo "⚠️ Warning: dist/index.js not found")
 
-# Now build the apps (which depend on the packages we just built)
-RUN echo "Starting build of applications..." && \
-    npm run build 2>&1 && \
-    echo "✓ Build completed successfully" || \
-    (echo "❌ Build FAILED - Collecting diagnostics..." && \
-    echo "=== apps/api directory ===" && \
+# Build remaining packages using turbo
+RUN echo "Step 2: Building remaining workspace packages..." && \
+    npx turbo run build --filter=@whiskey-bent/types --filter=@whiskey-bent/poker-core --filter=@whiskey-bent/tournament-core --filter=@whiskey-bent/compliance-rules --filter=@whiskey-bent/ui 2>&1 && \
+    echo "✓ Workspace packages built"
+
+# Build the API and realtime apps using the production build script
+RUN echo "Step 3: Building API and realtime applications..." && \
+    npm run build:prod 2>&1 && \
+    echo "✓ API and realtime applications built successfully"
+
+# Verify the API was built
+RUN echo "" && \
+    echo "Step 4: Verifying build outputs..." && \
+    (test -f apps/api/dist/main.js && echo "✓ API main.js exists") || \
+    (echo "❌ CRITICAL: API main.js missing!" && \
+    echo "=== Checking apps/api directory ===" && \
     ls -la apps/api/ && \
-    echo "=== Checking for dist dirs ===" && \
-    find apps packages -maxdepth 2 -name "dist" -type d && \
-    echo "=== node_modules/@whiskey-bent ===" && \
-    ls -la node_modules/@whiskey-bent 2>/dev/null || echo "No @whiskey-bent in node_modules" && \
-    echo "=== npm logs ===" && \
-    (tail -100 /root/.npm/_logs/*.log 2>/dev/null || echo "No npm logs") && \
+    echo "=== Checking for dist directory ===" && \
+    ls -la apps/api/dist 2>&1 || echo "apps/api/dist does not exist" && \
+    echo "=== Checking workspace packages ===" && \
+    ls -la node_modules/@whiskey-bent 2>/dev/null | head -10 || echo "No @whiskey-bent in node_modules" && \
     exit 1)
 
 # Inspect the dist directory structure in builder
