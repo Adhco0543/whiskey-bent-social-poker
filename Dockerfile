@@ -37,16 +37,21 @@ RUN echo "Generating Prisma client types..." && \
     ls -la node_modules/@prisma/client/index.d.ts || echo "⚠️ @prisma/client/index.d.ts not found"
 
 # Build workspace packages FIRST - they are critical dependencies
-RUN echo "Step 1: Building workspace packages..." && \
-    echo "=== Current directory: $(pwd) ===" && \
-    echo "=== ls -la apps/api before build ===" && \
-    ls -la apps/api/ 2>&1 | head -20 && \
-    echo "Running: npm ci to ensure all workspace deps are installed" && \
-    npm ci --legacy-peer-deps 2>&1 | tail -5 && \
-    echo "Running: npx turbo run build --force" && \
-    npx turbo run build --force 2>&1 && \
-    echo "✓ Build completed" || \
-    (echo "❌ Build FAILED"; exit 1)
+RUN echo "Step 1: Building dependencies for API..." && \
+    cd packages/database && \
+    npm run build && \
+    cd /app && \
+    cd packages/types && \
+    npm run build && \
+    cd /app && \
+    echo "✓ Dependencies built"
+
+# Build API directly with NestJS (bypassing turbo to debug)
+RUN echo "Step 2: Building API directly..." && \
+    cd apps/api && \
+    npm run build && \
+    echo "✓ API build completed" && \
+    ls -la dist/main.js
 
 # Verify the API was built
 RUN echo "" && \
