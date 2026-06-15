@@ -37,14 +37,16 @@ RUN echo "Generating Prisma client types..." && \
     ls -la node_modules/@prisma/client/index.d.ts || echo "⚠️ @prisma/client/index.d.ts not found"
 
 # Build workspace packages FIRST - they are critical dependencies
-# Step 1: Generate Prisma client (required before any build)
-# Step 2: Build ALL packages with turbo (handles dependency ordering automatically)
-RUN echo "Step 1: Building all workspace packages..." && \
-    echo "=== Current directory ===" && pwd && \
-    echo "=== Checking package.json ===" && head -20 package.json && \
-    echo "=== Running: npm run build ===" && \
-    npm run build && \
-    echo "✓ All packages built successfully"
+RUN echo "Step 1: Building workspace packages..." && \
+    echo "=== Current directory: $(pwd) ===" && \
+    echo "=== ls -la apps/api before build ===" && \
+    ls -la apps/api/ 2>&1 | head -20 && \
+    echo "Running: npm ci to ensure all workspace deps are installed" && \
+    npm ci --legacy-peer-deps 2>&1 | tail -5 && \
+    echo "Running: npx turbo run build --force" && \
+    npx turbo run build --force 2>&1 && \
+    echo "✓ Build completed" || \
+    (echo "❌ Build FAILED"; exit 1)
 
 # Verify the API was built
 RUN echo "" && \
