@@ -1,3 +1,5 @@
+import { randomInt } from 'node:crypto';
+
 /**
  * Server-side deterministic poker hand ranking.
  * Card notation: Ah, Td, 10c, 2s (rank then suit).
@@ -161,6 +163,22 @@ export class PokerEngine {
 
   static isValidGame(variant: 'NLH' | 'PLO'): boolean {
     return ['NLH', 'PLO'].includes(variant);
+  }
+
+  /** Cryptographically shuffled 52-card deck. Keep shuffling on the server. */
+  static shuffledDeck(): string[] {
+    const ranks = '23456789TJQKA';
+    const suits = 'cdhs';
+    const deck: string[] = [];
+    for (const suit of suits) {
+      for (const rank of ranks) deck.push(rank + suit);
+    }
+    // Fisher-Yates with crypto.randomInt() avoids modulo bias.
+    for (let index = deck.length - 1; index > 0; index--) {
+      const swapWith = randomInt(index + 1);
+      [deck[index], deck[swapWith]] = [deck[swapWith], deck[index]];
+    }
+    return deck;
   }
 
   static calculatePot(bets: number[]): number {
