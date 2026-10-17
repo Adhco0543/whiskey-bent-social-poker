@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -14,5 +15,6 @@ import { BonusModule } from './modules/bonus/bonus.module';
     UsersModule,
     BonusModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
