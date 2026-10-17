@@ -73,3 +73,11 @@ test('pot only accepts finite non-negative integer units', () => {
   assert.throws(() => PokerEngine.calculatePot([-1, 5]), /non-negative/);
   assert.throws(() => PokerEngine.calculatePot([1.2]), /non-negative/);
 });
+
+test('cryptographic shuffle returns all 52 unique cards', () => {
+  const deck = PokerEngine.shuffledDeck();
+  assert.equal(deck.length, 52);
+  assert.equal(new Set(deck).size, 52);
+  assert.ok(deck.includes('Ah'));
+  assert.ok(deck.includes('2c'));
+});
