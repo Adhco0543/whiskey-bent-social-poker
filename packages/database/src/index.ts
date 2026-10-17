@@ -4,10 +4,20 @@ export * from '@prisma/client';
 export async function getUserWithWallet(prisma: any, userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
-    include: { wallet: true },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      createdAt: true,
+      wallet: true,
+    },
   });
 }
 
+/**
+ * Call from an existing Prisma transaction for exactly-once bonus crediting.
+ * Do not call this outside a transaction when the bonus is redeemable.
+ */
 export async function addBonusToWallet(
   prisma: any,
   userId: string,
@@ -15,50 +25,33 @@ export async function addBonusToWallet(
   currency: 'GC' | 'SC',
   bonusType: 'signup' | 'daily_login'
 ) {
-  // Record the bonus
+  if (!Number.isSafeInteger(amount) || amount <= 0) {
+    throw new Error('Bonus amount must be a positive integer');
+  }
   const bonus = await prisma.bonusRecord.create({
-    data: {
-      userId,
-      type: bonusType,
-      amount,
-      currency,
-    },
+    data: { userId, type: bonusType, amount, currency },
   });
-
-  // Update wallet
-  const updateData: any = {};
-  updateData[currency === 'GC' ? 'goldCoins' : 'sweepCoins'] = {
-    increment: amount,
-  };
-  updateData.totalEarned = {
-    increment: amount,
-  };
-
+  const coinKey = currency === 'GC' ? 'goldCoins' : 'sweepCoins';
   const wallet = await prisma.wallet.upsert({
     where: { userId },
-    update: updateData,
+    update: {
+      [coinKey]: { increment: amount },
+      totalEarned: { increment: amount },
+    },
     create: {
       userId,
-      ...(currency === 'GC' ? { goldCoins: amount } : { sweepCoins: amount }),
+      [coinKey]: amount,
       totalEarned: amount,
     },
   });
-
   return { bonus, wallet };
 }
 
 export async function canClaimDailyBonus(prisma: any, userId: string): Promise<boolean> {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const loginToday = await prisma.dailyLogin.findFirst({
-    where: {
-      userId,
-      loginDate: {
-        gte: today,
-      },
-    },
+  const now = new Date();
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const login = await prisma.dailyLogin.findUnique({
+    where: { userId_loginDate: { userId, loginDate: today } },
   });
-
-  return !loginToday || !loginToday.claimedBonus;
+  return !login?.claimedBonus;
 }
