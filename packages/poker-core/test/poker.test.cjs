@@ -41,7 +41,7 @@ test('split pots evaluate equally with different suits', () => {
 
 test('best five of seven can use board plus hole cards', () => {
   assert.deepEqual(
-    rank(['Ah', 'Kd', 'Th', 'Jh', 'Qh', 'Kh', '9h']).score,
+    rank(['2d', '3c', 'Th', 'Jh', 'Qh', 'Kh', '9h']).score,
     [8, 13],
   );
 });
