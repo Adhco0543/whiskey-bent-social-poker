@@ -1,0 +1,35 @@
+name: Validate app foundations
+
+on:
+  push:
+    branches:
+      - main
+      - 'work/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate --schema packages/database/prisma/schema.prisma
+      - name: Build shared database utilities
+        run: npm run build --workspace @whiskey-bent/database
+      - name: Test poker engine
+        run: npm run test --workspace @whiskey-bent/poker-core
+      - name: Typecheck and build API
+        run: npm run build --workspace @whiskey-bent/api
+      - name: Build Render Docker image
+        run: docker build --tag whiskey-bent-api:ci .

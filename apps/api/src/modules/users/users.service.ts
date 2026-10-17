@@ -8,13 +8,18 @@ export class UsersService {
   async getProfile(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      include: { wallet: true },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        lastLoginAt: true,
+        wallet: true,
+      },
     });
   }
 
   async getWallet(userId: string) {
-    return this.prisma.wallet.findUnique({
-      where: { userId },
-    });
+    return this.prisma.wallet.findUnique({ where: { userId } });
   }
 }
