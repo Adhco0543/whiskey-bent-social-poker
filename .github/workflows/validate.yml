@@ -31,3 +31,5 @@ jobs:
         run: npm run test --workspace @whiskey-bent/poker-core
       - name: Typecheck and build API
         run: npm run build --workspace @whiskey-bent/api
+      - name: Build Render Docker image
+        run: docker build --tag whiskey-bent-api:ci .
