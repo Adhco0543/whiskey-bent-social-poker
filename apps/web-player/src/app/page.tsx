@@ -15,6 +15,7 @@ export default function Home() {
   const [user, setUser] = useState<any>(null);
   const [wallet, setWallet] = useState<any>(null);
   const [bonusHistory, setBonusHistory] = useState<any[]>([]);
+  const [rewardStatus, setRewardStatus] = useState<any>(null);
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState<'lobby' | 'wallet' | 'rewards'>('lobby');
 
@@ -31,6 +32,7 @@ export default function Home() {
       setMessage('Signup successful! You received 5 Sweep Coins bonus! 🎉');
       fetchWallet(response.data.token);
       fetchBonusHistory(response.data.token);
+      fetchRewardStatus(response.data.token);
     } catch (error: any) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
@@ -48,6 +50,7 @@ export default function Home() {
       setMessage('Login successful!');
       fetchWallet(response.data.token);
       fetchBonusHistory(response.data.token);
+      fetchRewardStatus(response.data.token);
     } catch (error: any) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
@@ -75,14 +78,26 @@ export default function Home() {
     }
   };
 
+  const fetchRewardStatus = async (authToken: string) => {
+    try {
+      const response = await axios.get(`${API_URL}/bonus/can-claim`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      setRewardStatus(response.data);
+    } catch (error) {
+      console.error('Unable to load daily reward status');
+    }
+  };
+
   const handleClaimDailyBonus = async () => {
     try {
       const response = await axios.post(`${API_URL}/bonus/daily-login`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMessage('Daily bonus claimed! You received 5 Sweep Coins! 🎁');
+      setMessage(`Day ${response.data.day} claimed! You received ${Number(response.data.amount).toFixed(2)} promotional Sweep Coins! 🎁`);
       fetchWallet(token);
       fetchBonusHistory(token);
+      fetchRewardStatus(token);
     } catch (error: any) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
@@ -143,7 +158,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block"><div className="text-sm font-semibold">{user?.username}</div><div className="text-xs text-[#9aa89d]">Founder's preview</div></div>
-            <Button onClick={() => { setToken(''); setUser(null); setWallet(null); setBonusHistory([]); }} className="bg-[#27382e] hover:bg-[#354b3c]">Log out</Button>
+            <Button onClick={() => { setToken(''); setUser(null); setWallet(null); setBonusHistory([]); setRewardStatus(null); }} className="bg-[#27382e] hover:bg-[#354b3c]">Log out</Button>
           </div>
         </div>
       </div>
@@ -199,7 +214,7 @@ export default function Home() {
 
         {activeTab === 'rewards' && (
           <section className="mt-8 grid gap-5 md:grid-cols-2">
-            <div className="rounded-2xl border border-[#c99b52]/30 bg-[#291a11] p-6"><p className="text-xs font-bold uppercase tracking-widest text-[#d2b776]">Daily reward</p><h3 className="mt-3 text-2xl font-bold">Your daily bonus</h3><p className="mt-2 text-sm text-[#aebdaf]">Claim the promotional daily login bonus available to your account.</p><Button onClick={handleClaimDailyBonus} className="mt-6 w-full bg-[#c99b52] text-[#10140f] hover:bg-[#d2b776]">Claim daily bonus</Button></div>
+            <div className="rounded-2xl border border-[#c99b52]/30 bg-[#291a11] p-6"><p className="text-xs font-bold uppercase tracking-widest text-[#d2b776]">Daily reward</p><h3 className="mt-3 text-2xl font-bold">Your daily bonus</h3><p className="mt-2 text-sm text-[#aebdaf]">30-day rewards: 0.10 SC on Day 1, increasing by 0.05 SC each day and each new week. Day 30 awards 5.00 SC, then the cycle restarts. Miss a UTC calendar day and your streak resets.</p><p className="mt-4 font-semibold text-[#e7c886]">{rewardStatus ? `Day ${rewardStatus.day} of 30 · ${rewardStatus.canClaim ? `${Number(rewardStatus.nextReward).toFixed(2)} SC available` : `Claimed today · next ${Number(rewardStatus.nextReward).toFixed(2)} SC`}` : "Loading your reward progress..."}</p><Button onClick={handleClaimDailyBonus} disabled={!rewardStatus?.canClaim} className="mt-6 w-full bg-[#c99b52] text-[#10140f] hover:bg-[#d2b776]">{rewardStatus?.canClaim ? "Claim daily reward" : "Already claimed today"}</Button></div>
             <div className="rounded-2xl border border-[#405546] bg-[#291a11] p-6"><h3 className="text-xl font-bold">Bonus history</h3><div className="mt-4 space-y-3">{bonusHistory.length === 0 ? <p className="text-sm text-[#aebdaf]">No bonus history yet.</p> : bonusHistory.map((bonus: any) => <div key={bonus.id} className="flex justify-between gap-3 border-b border-[#3a4b3d] pb-3 text-sm"><span className="capitalize">{String(bonus.type).replace('_', ' ')}</span><span className="font-bold text-[#dfc07b]">+{bonus.amount} {bonus.currency}</span></div>)}</div></div>
           </section>
         )}
