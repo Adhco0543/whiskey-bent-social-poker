@@ -15,7 +15,12 @@
     "resolveJsonModule": true,
     "moduleResolution": "Node16",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@whiskey-bent/database": [
+        "../../packages/database/dist/index.d.ts"
+      ]
+    }
   },
   "include": [
     "src"
