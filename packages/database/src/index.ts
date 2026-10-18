@@ -49,7 +49,7 @@ export async function addBonusToWallet(
 
 export async function canClaimDailyBonus(prisma: any, userId: string): Promise<boolean> {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setUTCHours(0, 0, 0, 0);
 
   const loginToday = await prisma.dailyLogin.findFirst({
     where: {
