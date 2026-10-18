@@ -9,24 +9,23 @@
     "esModuleInterop": true,
     "paths": {
       "@whiskey-bent/types": [
-        "packages/types/src"
+        "./packages/types/src"
       ],
       "@whiskey-bent/database": [
-        "packages/database/src"
+        "./packages/database/src"
       ],
       "@whiskey-bent/ui": [
-        "packages/ui/src"
+        "./packages/ui/src"
       ],
       "@whiskey-bent/poker-core": [
-        "packages/poker-core/src"
+        "./packages/poker-core/src"
       ],
       "@whiskey-bent/tournament-core": [
-        "packages/tournament-core/src"
+        "./packages/tournament-core/src"
       ],
       "@whiskey-bent/compliance-rules": [
-        "packages/compliance-rules/src"
+        "./packages/compliance-rules/src"
       ]
-    },
-    "baseUrl": "."
+    }
   }
 }
