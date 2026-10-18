@@ -16,6 +16,7 @@ export default function Home() {
   const [wallet, setWallet] = useState<any>(null);
   const [bonusHistory, setBonusHistory] = useState<any[]>([]);
   const [message, setMessage] = useState('');
+  const [activeTab, setActiveTab] = useState<'lobby' | 'wallet' | 'rewards'>('lobby');
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,80 +166,77 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-white">🎰 Whiskey Bent Poker</h1>
-          <Button
-            onClick={() => {
-              setToken('');
-              setUser(null);
-              setWallet(null);
-              setBonusHistory([]);
-            }}
-            className="bg-red-600 hover:bg-red-700"
-          >
-            Logout
-          </Button>
+    <main className="min-h-screen bg-[#090e0c] text-[#f5f1e7]">
+      <div className="border-b border-[#b99a52]/20 bg-[#101713]">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-[0.35em] text-[#cbb277]">WHISKEY BENT</div>
+            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">SOCIAL POKER <span className="text-[#cbb277]">♠</span></h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden text-right sm:block"><div className="text-sm font-semibold">{user?.username}</div><div className="text-xs text-[#9aa89d]">Founder's preview</div></div>
+            <Button onClick={() => { setToken(''); setUser(null); setWallet(null); setBonusHistory([]); }} className="bg-[#27382e] hover:bg-[#354b3c]">Log out</Button>
+          </div>
         </div>
+      </div>
 
-        {/* User Info */}
-        <Card className="bg-gray-900 border-purple-500 mb-6">
-          <h2 className="text-2xl font-bold text-white mb-4">Welcome, {user?.username}!</h2>
-          <p className="text-gray-300">{user?.email}</p>
-        </Card>
+      <div className="mx-auto max-w-6xl px-5 py-8">
+        <section className="relative overflow-hidden rounded-3xl border border-[#b99a52]/30 bg-gradient-to-br from-[#214a35] via-[#122b20] to-[#0d1713] p-7 shadow-2xl sm:p-10">
+          <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full border-[28px] border-[#d7b56c]/10" />
+          <div className="relative max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0c587]">The table is being set</p>
+            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">YOUR SEAT.<br/><span className="text-[#dfc07b]">YOUR GAME.</span></h2>
+            <p className="mt-4 max-w-lg text-[#d2ddd2]">A new social poker room is taking shape. Explore the lobby preview while we prepare multiplayer tables for testing.</p>
+            <div className="mt-6 inline-flex rounded-full border border-[#d9b977]/40 bg-black/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#e9d49e]">♣ Preview mode · No live tables yet</div>
+          </div>
+        </section>
 
-        {/* Wallet */}
-        {wallet && (
-          <Card className="bg-gray-900 border-blue-500 mb-6">
-            <h2 className="text-2xl font-bold text-white mb-4">💰 Your Wallet</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded bg-gray-800">
-                <p className="text-gray-400 text-sm">Gold Coins (Entertainment)</p>
-                <p className="text-3xl font-bold text-yellow-400">{wallet.goldCoins}</p>
-              </div>
-              <div className="p-4 rounded bg-gray-800">
-                <p className="text-gray-400 text-sm">Sweep Coins (Promotional)</p>
-                <p className="text-3xl font-bold text-purple-400">{wallet.sweepCoins}</p>
-              </div>
-            </div>
-          </Card>
-        )}
+        <nav aria-label="Dashboard sections" className="mt-7 flex flex-wrap gap-2">
+          {([['lobby', '♠ Poker Lobby'], ['wallet', '◈ My Wallet'], ['rewards', '★ Rewards']] as const).map(([id, label]) => (
+            <button key={id} type="button" onClick={() => setActiveTab(id)} className={`rounded-xl px-5 py-3 text-sm font-bold transition ${activeTab === id ? 'bg-[#c9aa6c] text-[#10140f]' : 'border border-[#455548] bg-[#18221b] text-[#e2e9de] hover:bg-[#25372a]'}`}>{label}</button>
+          ))}
+        </nav>
 
-        {/* Daily Bonus */}
-        <Card className="bg-gray-900 border-green-500 mb-6">
-          <h2 className="text-2xl font-bold text-white mb-4">🎁 Daily Bonus</h2>
-          <p className="text-gray-300 mb-4">Claim your daily bonus of 5 Sweep Coins!</p>
-          <Button
-            onClick={handleClaimDailyBonus}
-            className="w-full bg-green-600 hover:bg-green-700"
-          >
-            Claim Daily Bonus
-          </Button>
-        </Card>
+        {message && <div role="status" className="mt-5 rounded-xl border border-[#b99a52]/40 bg-[#263024] p-4 text-sm text-[#f1e4c7]">{message}</div>}
 
-        {/* Bonus History */}
-        {bonusHistory.length > 0 && (
-          <Card className="bg-gray-900 border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-4">📊 Bonus History</h2>
-            <div className="space-y-2">
-              {bonusHistory.map((bonus: any) => (
-                <div key={bonus.id} className="flex justify-between items-center p-3 rounded bg-gray-800">
-                  <div>
-                    <p className="text-white font-semibold capitalize">{bonus.type.replace('_', ' ')}</p>
-                    <p className="text-gray-400 text-sm">
-                      {new Date(bonus.createdAt).toLocaleDateString()}
-                    </p>
+        {activeTab === 'lobby' && (
+          <section className="mt-8">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-widest text-[#c7aa6d]">Coming soon</p><h3 className="mt-1 text-2xl font-bold">Poker room lobby</h3></div><span className="rounded-full bg-[#25372a] px-3 py-2 text-xs text-[#c8d8cb]">Play-money testing planned</span></div>
+            <div className="grid gap-5 md:grid-cols-2">
+              {[
+                { title: 'The Whiskey Room', mode: 'Texas Hold’em', seats: '6 seats', blinds: 'Play-money table', symbol: '♠' },
+                { title: 'The High Roller', mode: 'Texas Hold’em', seats: '9 seats', blinds: 'Play-money table', symbol: '♦' },
+              ].map((table) => (
+                <div key={table.title} className="overflow-hidden rounded-2xl border border-[#405546] bg-[#151f18]">
+                  <div className="flex h-40 items-center justify-center bg-[radial-gradient(ellipse_at_center,_#276947_0%,_#17422d_55%,_#102219_75%)] p-6">
+                    <div className="flex h-28 w-64 items-center justify-center rounded-[50%] border-[9px] border-[#674a2c] bg-[#165638] shadow-[0_12px_35px_rgba(0,0,0,0.5),inset_0_0_0_3px_#d5b77b]"><span className="text-5xl text-[#e1c88d]">{table.symbol}</span></div>
                   </div>
-                  <Badge variant={bonus.currency === 'SC' ? 'success' : 'primary'}>
-                    +{bonus.amount} {bonus.currency}
-                  </Badge>
+                  <div className="p-5"><h4 className="text-xl font-bold">{table.title}</h4><p className="mt-1 text-sm text-[#9fb3a3]">{table.mode} · {table.seats} · {table.blinds}</p><button disabled className="mt-5 w-full cursor-not-allowed rounded-xl border border-[#9d8558]/40 bg-[#514832]/50 px-4 py-3 font-semibold text-[#c4b89c]">Table not available yet</button></div>
                 </div>
               ))}
             </div>
-          </Card>
+            <p className="mt-5 text-sm text-[#a7b6a9]">These are design previews, not active poker games. No bets, buy-ins, or redemptions are enabled.</p>
+          </section>
         )}
+
+        {activeTab === 'wallet' && (
+          <section className="mt-8"><h3 className="mb-5 text-2xl font-bold">My wallet</h3>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="rounded-2xl border border-[#b99a52]/30 bg-[#1c251d] p-7"><p className="text-sm text-[#b5c2b6]">Gold Coins · Entertainment</p><p className="mt-3 text-5xl font-black text-[#e5c47a]">{wallet?.goldCoins ?? '...'}</p></div>
+              <div className="rounded-2xl border border-[#b99a52]/30 bg-[#1c251d] p-7"><p className="text-sm text-[#b5c2b6]">Sweep Coins · Promotional</p><p className="mt-3 text-5xl font-black text-[#e5c47a]">{wallet?.sweepCoins ?? '...'}</p></div>
+            </div>
+            <p className="mt-4 text-sm text-[#a7b6a9]">Balances are shown for account testing only. Gameplay and redemption are not enabled.</p>
+          </section>
+        )}
+
+        {activeTab === 'rewards' && (
+          <section className="mt-8 grid gap-5 md:grid-cols-2">
+            <div className="rounded-2xl border border-[#b99a52]/30 bg-[#17231b] p-6"><p className="text-xs font-bold uppercase tracking-widest text-[#d2b776]">Daily reward</p><h3 className="mt-3 text-2xl font-bold">Your daily bonus</h3><p className="mt-2 text-sm text-[#aebdaf]">Claim the promotional daily login bonus available to your account.</p><Button onClick={handleClaimDailyBonus} className="mt-6 w-full bg-[#b99a52] text-[#10140f] hover:bg-[#d2b776]">Claim daily bonus</Button></div>
+            <div className="rounded-2xl border border-[#405546] bg-[#17231b] p-6"><h3 className="text-xl font-bold">Bonus history</h3><div className="mt-4 space-y-3">{bonusHistory.length === 0 ? <p className="text-sm text-[#aebdaf]">No bonus history yet.</p> : bonusHistory.map((bonus: any) => <div key={bonus.id} className="flex justify-between gap-3 border-b border-[#3a4b3d] pb-3 text-sm"><span className="capitalize">{String(bonus.type).replace('_', ' ')}</span><span className="font-bold text-[#dfc07b]">+{bonus.amount} {bonus.currency}</span></div>)}</div></div>
+          </section>
+        )}
+        <footer className="mt-14 border-t border-[#3c4c3e] py-6 text-center text-xs text-[#879b8a]">WHISKEY BENT SOCIAL POKER · DEVELOPMENT PREVIEW · 18+</footer>
       </div>
-    </div>
+    </main>
   );
 }
