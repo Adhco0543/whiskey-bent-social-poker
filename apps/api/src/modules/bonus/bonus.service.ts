@@ -1,6 +1,5 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { addBonusToWallet, canClaimDailyBonus } from '@whiskey-bent/database';
 
 @Injectable()
 export class BonusService {
@@ -26,7 +25,15 @@ export class BonusService {
         throw new ConflictException('Daily bonus already claimed');
       }
 
-      return addBonusToWallet(tx, userId, 5, 'SC', 'daily_login');
+      const bonus = await tx.bonusRecord.create({
+        data: { userId, type: 'daily_login', amount: 5, currency: 'SC' },
+      });
+      const wallet = await tx.wallet.upsert({
+        where: { userId },
+        update: { sweepCoins: { increment: 5 }, totalEarned: { increment: 5 } },
+        create: { userId, sweepCoins: 5, totalEarned: 5 },
+      });
+      return { bonus, wallet };
     });
   }
 
@@ -39,6 +46,11 @@ export class BonusService {
   }
 
   async canClaimDailyBonus(userId: string) {
-    return canClaimDailyBonus(this.prisma, userId);
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const record = await this.prisma.dailyLogin.findUnique({
+      where: { userId_loginDate: { userId, loginDate: today } },
+    });
+    return !record?.claimedBonus;
   }
 }
