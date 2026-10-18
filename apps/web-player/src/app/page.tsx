@@ -93,12 +93,12 @@ export default function Home() {
       <main className="relative min-h-screen overflow-hidden bg-[#160b08] text-[#f6f1e4]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_25%_25%,_#643018_0%,_transparent_52%)]" />
         <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-5">
-          <header className="flex items-center justify-between border-b border-[#bfa267]/20 py-6">
-            <div className="flex items-center gap-3">
-              <span aria-hidden="true" className="text-3xl text-[#e1c484]">♠</span>
-              <div><p className="brand-script text-3xl leading-none text-[#e2c786] sm:text-4xl">Whiskey Bent</p><p className="text-xs font-semibold tracking-[0.23em] text-[#b6c4b5]">SOCIAL CASINO</p></div>
-            </div>
-            <span className="rounded-full border border-[#bfa267]/30 px-3 py-1 text-xs font-semibold tracking-widest text-[#d8c69c]">SOCIAL CASINO · PREVIEW</span>
+          <header className="relative -mx-5 overflow-hidden border-b border-[#bfa267]/30 bg-[#120906]">
+            <img
+              src="https://raw.githubusercontent.com/Adhco0543/whiskey-bent-social-poker/main/a_dramatic_cinematic_ultra_detailed_photorealis.png"
+              alt="Whiskey Bent original approved Western casino artwork with gold lettering, bourbon bottle, cowboy hat, aces and poker chips"
+              className="block h-auto w-full"
+            />
           </header>
 
           <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
