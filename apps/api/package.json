@@ -6,7 +6,7 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "nest start --watch",
-    "build": "npm install --include=dev && nest build",
+    "build": "npm run generate --workspace=@whiskey-bent/database && npm run build --workspace=@whiskey-bent/database && nest build",
     "start": "node dist/main",
     "lint": "eslint src"
   },
