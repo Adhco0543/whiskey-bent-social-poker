@@ -8,7 +8,14 @@ export class UsersService {
   async getProfile(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      include: { wallet: true },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        createdAt: true,
+        lastLoginAt: true,
+        wallet: true,
+      },
     });
   }
 
