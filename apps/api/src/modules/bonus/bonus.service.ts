@@ -94,8 +94,8 @@ export class BonusService {
     const alreadyClaimed = Boolean(claimed?.claimedBonus);
     return {
       canClaim: !alreadyClaimed,
-      day: alreadyClaimed ? (progress.day === 1 ? CYCLE_DAYS : progress.day - 1) : progress.day,
-      nextReward: progress.amount,
+      day: progress.day,
+      nextReward: alreadyClaimed ? rewardForDay(progress.day === CYCLE_DAYS ? 1 : progress.day + 1) : progress.amount,
       cycleDays: CYCLE_DAYS,
       monthlyPrize: 5,
       timezone: 'UTC',
