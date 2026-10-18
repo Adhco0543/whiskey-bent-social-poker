@@ -116,7 +116,11 @@ export default function Home() {
               {isSignupMode && (
                 <input
                   type="text"
-                  placeholder="Username"
+                  placeholder="Username (3-32 letters, numbers, underscores)"
+                  minLength={3}
+                  maxLength={32}
+                  pattern="[A-Za-z0-9_]+"
+                  required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:border-purple-500"
@@ -125,6 +129,7 @@ export default function Home() {
               <input
                 type="email"
                 placeholder="Email"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:border-purple-500"
