@@ -96,7 +96,7 @@ export default function Home() {
           <header className="flex items-center justify-between border-b border-[#bfa267]/20 py-6">
             <div className="flex items-center gap-3">
               <span aria-hidden="true" className="text-3xl text-[#e1c484]">♠</span>
-              <div><p className="text-sm font-black tracking-[0.24em] text-[#e2c786]">WHISKEY BENT</p><p className="text-xs font-semibold tracking-[0.23em] text-[#b6c4b5]">SOCIAL POKER</p></div>
+              <div><p className="brand-script text-3xl leading-none text-[#e2c786] sm:text-4xl">Whiskey Bent</p><p className="text-xs font-semibold tracking-[0.23em] text-[#b6c4b5]">SOCIAL POKER</p></div>
             </div>
             <span className="rounded-full border border-[#bfa267]/30 px-3 py-1 text-xs font-semibold tracking-widest text-[#d8c69c]">DEVELOPMENT PREVIEW</span>
           </header>
@@ -104,7 +104,7 @@ export default function Home() {
           <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
             <section className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.32em] text-[#d8b975]">Welcome to the room</p>
-              <h1 className="mt-5 text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">WHERE THE<br/><span className="text-[#e0c181]">CARDS</span> FALL.</h1>
+              <h1 className="brand-script mt-5 text-6xl leading-[1.25] sm:text-7xl lg:text-8xl">Where the<br/><span className="text-[#e0c181]">Cards</span> Fall</h1>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#bfcec0]">Your seat at the table is waiting. Explore the new Whiskey Bent poker experience as we build our social play rooms.</p>
               <div className="relative mt-10 flex h-52 max-w-lg items-center justify-center rounded-3xl border border-[#ad8b51]/30 bg-[radial-gradient(ellipse_at_center,_#286849_0%,_#16422e_55%,_#0e2219_75%)] shadow-[0_25px_75px_rgba(0,0,0,0.45)] sm:h-64">
                 <div className="absolute inset-5 rounded-[50%] border-[12px] border-[#725333] shadow-[inset_0_0_0_3px_#e2c382,0_8px_25px_rgba(0,0,0,0.4)] sm:inset-7" />
@@ -115,7 +115,7 @@ export default function Home() {
 
             <section aria-label="Account access" className="w-full max-w-lg justify-self-center rounded-3xl border border-[#bda064]/35 bg-[#121e17]/95 p-6 shadow-2xl sm:p-9">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#d4b576]">Players club</p>
-              <h2 className="mt-3 text-3xl font-black">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
+              <h2 className="brand-script mt-3 text-5xl leading-tight">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
               <p className="mt-2 text-sm text-[#adbdad]">{isSignupMode ? 'Create your account to explore the preview.' : 'Sign in to your Whiskey Bent account.'}</p>
               <div className="mt-7 grid grid-cols-2 gap-2 rounded-xl bg-[#0b130e] p-1">
                 <button type="button" onClick={() => { setIsSignupMode(false); setMessage(''); }} className={`rounded-lg px-4 py-3 text-sm font-bold transition ${!isSignupMode ? 'bg-[#c7a96c] text-[#10140f]' : 'text-[#b8c7b9] hover:bg-[#24352a]'}`}>Log in</button>
@@ -142,8 +142,8 @@ export default function Home() {
       <div className="border-b border-[#b99a52]/20 bg-[#101713]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5">
           <div>
-            <div className="text-xs font-bold uppercase tracking-[0.35em] text-[#cbb277]">WHISKEY BENT</div>
-            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">SOCIAL POKER <span className="text-[#cbb277]">♠</span></h1>
+            <div className="brand-script text-3xl leading-tight text-[#cbb277]">Whiskey Bent</div>
+            <h1 className="mt-1 text-lg font-bold tracking-[0.17em] sm:text-xl">SOCIAL POKER <span className="text-[#cbb277]">♠</span></h1>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block"><div className="text-sm font-semibold">{user?.username}</div><div className="text-xs text-[#9aa89d]">Founder's preview</div></div>
@@ -157,7 +157,7 @@ export default function Home() {
           <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full border-[28px] border-[#d7b56c]/10" />
           <div className="relative max-w-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0c587]">The table is being set</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">YOUR SEAT.<br/><span className="text-[#dfc07b]">YOUR GAME.</span></h2>
+            <h2 className="brand-script mt-4 text-6xl leading-tight sm:text-7xl">Your Seat.<br/><span className="text-[#dfc07b]">Your Game.</span></h2>
             <p className="mt-4 max-w-lg text-[#d2ddd2]">A new social poker room is taking shape. Explore the lobby preview while we prepare multiplayer tables for testing.</p>
             <div className="mt-6 inline-flex rounded-full border border-[#d9b977]/40 bg-black/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#e9d49e]">♣ Preview mode · No live tables yet</div>
           </div>
