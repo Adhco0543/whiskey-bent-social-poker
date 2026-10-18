@@ -106,10 +106,6 @@ export default function Home() {
               <p className="text-xs font-bold uppercase tracking-[0.32em] text-[#d8b975]">Welcome to the room</p>
               <h1 className="brand-script mt-5 text-6xl leading-[1.25] sm:text-7xl lg:text-8xl">Where the<br/><span className="text-[#e0c181]">Cards</span> Fall</h1>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#bfcec0]">Your next favorite game is taking shape. Explore Whiskey Bent as we build social poker, casino-style games, and more.</p>
-              <div className="relative mt-10 flex h-52 max-w-lg items-center justify-center rounded-3xl border border-[#ad8b51]/30 bg-[radial-gradient(ellipse_at_center,_#80502a_0%,_#4d2c1a_55%,_#28160e_75%)] shadow-[0_25px_75px_rgba(0,0,0,0.45)] sm:h-64">
-                <div className="absolute inset-5 rounded-[50%] border-[12px] border-[#725333] shadow-[inset_0_0_0_3px_#e2c382,0_8px_25px_rgba(0,0,0,0.4)] sm:inset-7" />
-                <div className="relative flex items-center gap-3 text-6xl font-black drop-shadow-xl sm:text-7xl"><span className="rotate-[-12deg] text-[#f8f1dd]">A<span className="block text-3xl text-[#b72731]">♥</span></span><span className="rotate-[12deg] text-[#f8f1dd]">K<span className="block text-3xl text-[#101c16]">♠</span></span></div>
-              </div>
               <p className="mt-5 text-sm text-[#a9bba9]">♣ Poker planned &nbsp; • &nbsp; ♦ Casino-style games coming soon</p>
             </section>
 
