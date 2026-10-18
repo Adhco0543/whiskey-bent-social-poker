@@ -38,16 +38,17 @@ export class AuthService {
     const existing = await this.prisma.user.findFirst({ where: { OR: [{ email }, { username }] } });
     if (existing) throw new ConflictException('Email or username is already registered');
     const passwordHash = await hashPassword(password);
-    const user = await this.prisma.user.create({
-      data: {
-        email,
-        username,
-        password: passwordHash,
-      },
+    const user = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          email,
+          username,
+          password: passwordHash,
+        },
+      });
+      await addBonusToWallet(tx, created.id, 5, 'SC', 'signup');
+      return created;
     });
-
-    // Award sign-up bonus: 5 Sweep Coins
-    await addBonusToWallet(this.prisma, user.id, 5, 'SC', 'signup');
 
     const token = this.jwtService.sign({ sub: user.id, email: user.email });
     const { password: _password, ...safeUser } = user;
