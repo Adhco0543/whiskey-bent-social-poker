@@ -6,7 +6,7 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "nest start --watch",
-    "build": "npm run generate --workspace=@whiskey-bent/database && npm run build --workspace=@whiskey-bent/database && nest build",
+    "build": "npm run generate --workspace=@whiskey-bent/database && npm run build --workspace=@whiskey-bent/database && tsc -p tsconfig.json",
     "start": "node dist/main",
     "lint": "eslint src"
   },
