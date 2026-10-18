@@ -1,9 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "Node16",
     "target": "ES2021",
-    "lib": ["ES2021"],
+    "lib": [
+      "ES2021"
+    ],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -11,10 +13,15 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
