@@ -63,7 +63,7 @@ export class AuthService {
 
     // Record login
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
 
     await this.prisma.dailyLogin.upsert({
       where: { userId_loginDate: { userId: user.id, loginDate: today } },
