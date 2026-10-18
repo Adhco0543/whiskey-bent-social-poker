@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { addBonusToWallet, canClaimDailyBonus } from '@whiskey-bent/database';
 
@@ -7,29 +7,27 @@ export class BonusService {
   constructor(private prisma: PrismaService) {}
 
   async claimDailyBonus(userId: string) {
-    // Check if user can claim bonus
-    const canClaim = await canClaimDailyBonus(this.prisma, userId);
-    if (!canClaim) {
-      throw new Error('Daily bonus already claimed');
-    }
-
-    // Award 5 Sweep Coins
-    const result = await addBonusToWallet(this.prisma, userId, 5, 'SC', 'daily_login');
-
-    // Mark bonus as claimed for today
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    await this.prisma.dailyLogin.upsert({
-      where: { userId_loginDate: { userId, loginDate: today } },
-      update: { claimedBonus: true },
-      create: {
-        userId,
-        loginDate: today,
-        claimedBonus: true,
-      },
-    });
+    today.setUTCHours(0, 0, 0, 0);
 
-    return result;
+    return this.prisma.$transaction(async (tx) => {
+      await tx.dailyLogin.upsert({
+        where: { userId_loginDate: { userId, loginDate: today } },
+        update: {},
+        create: { userId, loginDate: today },
+      });
+
+      const claim = await tx.dailyLogin.updateMany({
+        where: { userId, loginDate: today, claimedBonus: false },
+        data: { claimedBonus: true },
+      });
+
+      if (claim.count !== 1) {
+        throw new ConflictException('Daily bonus already claimed');
+      }
+
+      return addBonusToWallet(tx, userId, 5, 'SC', 'daily_login');
+    });
   }
 
   async getBonusHistory(userId: string, limit = 10) {
