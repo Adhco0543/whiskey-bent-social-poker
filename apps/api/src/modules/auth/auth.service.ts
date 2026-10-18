@@ -22,7 +22,6 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
 
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma/prisma.service';
-import { addBonusToWallet } from '@whiskey-bent/database';
 
 @Injectable()
 export class AuthService {
@@ -46,7 +45,12 @@ export class AuthService {
           password: passwordHash,
         },
       });
-      await addBonusToWallet(tx, created.id, 5, 'SC', 'signup');
+      await tx.wallet.create({
+        data: { userId: created.id, sweepCoins: 5, totalEarned: 5 },
+      });
+      await tx.bonusRecord.create({
+        data: { userId: created.id, type: 'signup', amount: 5, currency: 'SC' },
+      });
       return created;
     });
 
