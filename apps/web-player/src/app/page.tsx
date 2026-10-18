@@ -90,78 +90,50 @@ export default function Home() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black p-4">
-        <div className="max-w-md mx-auto mt-20">
-          <Card className="bg-gray-900 border-purple-500 shadow-2xl">
-            <div className="text-center mb-6">
-              <h1 className="text-4xl font-bold text-white mb-2">🎰 Whiskey Bent</h1>
-              <p className="text-gray-300">Social Poker Platform</p>
+      <main className="relative min-h-screen overflow-hidden bg-[#080e0b] text-[#f6f1e4]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_25%_25%,_#214832_0%,_transparent_52%)]" />
+        <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-5">
+          <header className="flex items-center justify-between border-b border-[#bfa267]/20 py-6">
+            <div className="flex items-center gap-3">
+              <span aria-hidden="true" className="text-3xl text-[#e1c484]">♠</span>
+              <div><p className="text-sm font-black tracking-[0.24em] text-[#e2c786]">WHISKEY BENT</p><p className="text-xs font-semibold tracking-[0.23em] text-[#b6c4b5]">SOCIAL POKER</p></div>
             </div>
+            <span className="rounded-full border border-[#bfa267]/30 px-3 py-1 text-xs font-semibold tracking-widest text-[#d8c69c]">DEVELOPMENT PREVIEW</span>
+          </header>
 
-            <div className="flex gap-2 mb-6">
-              <Button
-                onClick={() => setIsSignupMode(false)}
-                className={`flex-1 ${!isSignupMode ? 'bg-purple-600' : 'bg-gray-700'}`}
-              >
-                Login
-              </Button>
-              <Button
-                onClick={() => setIsSignupMode(true)}
-                className={`flex-1 ${isSignupMode ? 'bg-purple-600' : 'bg-gray-700'}`}
-              >
-                Sign Up
-              </Button>
-            </div>
-
-            <form onSubmit={isSignupMode ? handleSignup : handleLogin} className="space-y-4">
-              {isSignupMode && (
-                <input
-                  type="text"
-                  placeholder="Username (3-32 letters, numbers, underscores)"
-                  minLength={3}
-                  maxLength={32}
-                  pattern="[A-Za-z0-9_]+"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:border-purple-500"
-                />
-              )}
-              <input
-                type="email"
-                placeholder="Email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:border-purple-500"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:border-purple-500"
-              />
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
-                {isSignupMode ? 'Sign Up' : 'Login'}
-              </Button>
-            </form>
-
-            {message && (
-              <div className="mt-4 p-3 rounded bg-blue-900 text-blue-100 text-sm">
-                {message}
+          <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+            <section className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.32em] text-[#d8b975]">Welcome to the room</p>
+              <h1 className="mt-5 text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">WHERE THE<br/><span className="text-[#e0c181]">CARDS</span> FALL.</h1>
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#bfcec0]">Your seat at the table is waiting. Explore the new Whiskey Bent poker experience as we build our social play rooms.</p>
+              <div className="relative mt-10 flex h-52 max-w-lg items-center justify-center rounded-3xl border border-[#ad8b51]/30 bg-[radial-gradient(ellipse_at_center,_#286849_0%,_#16422e_55%,_#0e2219_75%)] shadow-[0_25px_75px_rgba(0,0,0,0.45)] sm:h-64">
+                <div className="absolute inset-5 rounded-[50%] border-[12px] border-[#725333] shadow-[inset_0_0_0_3px_#e2c382,0_8px_25px_rgba(0,0,0,0.4)] sm:inset-7" />
+                <div className="relative flex items-center gap-3 text-6xl font-black drop-shadow-xl sm:text-7xl"><span className="rotate-[-12deg] text-[#f8f1dd]">A<span className="block text-3xl text-[#b72731]">♥</span></span><span className="rotate-[12deg] text-[#f8f1dd]">K<span className="block text-3xl text-[#101c16]">♠</span></span></div>
               </div>
-            )}
+              <p className="mt-5 text-sm text-[#a9bba9]">♣ Texas Hold'em planned &nbsp; • &nbsp; ♦ Multiplayer testing coming soon</p>
+            </section>
 
-            {isSignupMode && (
-              <div className="mt-4 p-3 rounded bg-green-900 text-green-100 text-sm">
-                <p className="font-bold">Sign Up Bonus:</p>
-                <p>Get 5 Sweep Coins when you create your account! 🎁</p>
+            <section aria-label="Account access" className="w-full max-w-lg justify-self-center rounded-3xl border border-[#bda064]/35 bg-[#121e17]/95 p-6 shadow-2xl sm:p-9">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#d4b576]">Players club</p>
+              <h2 className="mt-3 text-3xl font-black">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
+              <p className="mt-2 text-sm text-[#adbdad]">{isSignupMode ? 'Create your account to explore the preview.' : 'Sign in to your Whiskey Bent account.'}</p>
+              <div className="mt-7 grid grid-cols-2 gap-2 rounded-xl bg-[#0b130e] p-1">
+                <button type="button" onClick={() => { setIsSignupMode(false); setMessage(''); }} className={`rounded-lg px-4 py-3 text-sm font-bold transition ${!isSignupMode ? 'bg-[#c7a96c] text-[#10140f]' : 'text-[#b8c7b9] hover:bg-[#24352a]'}`}>Log in</button>
+                <button type="button" onClick={() => { setIsSignupMode(true); setMessage(''); }} className={`rounded-lg px-4 py-3 text-sm font-bold transition ${isSignupMode ? 'bg-[#c7a96c] text-[#10140f]' : 'text-[#b8c7b9] hover:bg-[#24352a]'}`}>Sign up</button>
               </div>
-            )}
-          </Card>
+              <form onSubmit={isSignupMode ? handleSignup : handleLogin} className="mt-6 space-y-4">
+                {isSignupMode && <div><label htmlFor="signup-username" className="mb-2 block text-sm font-semibold text-[#e4e8df]">Username</label><input id="signup-username" type="text" autoComplete="username" placeholder="3–32 letters, numbers or underscores" minLength={3} maxLength={32} pattern="[A-Za-z0-9_]+" required value={username} onChange={(e) => setUsername(e.target.value)} className="w-full rounded-xl border border-[#4d624e] bg-[#0b140f] px-4 py-3 text-white outline-none focus:border-[#d8b975]" /></div>}
+                <div><label htmlFor="account-email" className="mb-2 block text-sm font-semibold text-[#e4e8df]">Email address</label><input id="account-email" type="email" autoComplete="email" placeholder="you@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-[#4d624e] bg-[#0b140f] px-4 py-3 text-white outline-none focus:border-[#d8b975]" /></div>
+                <div><label htmlFor="account-password" className="mb-2 block text-sm font-semibold text-[#e4e8df]">Password</label><input id="account-password" type="password" autoComplete={isSignupMode ? 'new-password' : 'current-password'} minLength={isSignupMode ? 12 : undefined} placeholder={isSignupMode ? 'At least 12 characters' : 'Your password'} required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-xl border border-[#4d624e] bg-[#0b140f] px-4 py-3 text-white outline-none focus:border-[#d8b975]" /></div>
+                <button type="submit" className="w-full rounded-xl bg-[#d1b174] px-5 py-3.5 font-black text-[#101710] transition hover:bg-[#e5c68a]">{isSignupMode ? 'Create account  →' : 'Enter the room  →'}</button>
+              </form>
+              {message && <div role="status" className="mt-5 rounded-xl border border-[#c6a466]/40 bg-[#293524] p-3 text-sm text-[#f2e3c5]">{message}</div>}
+              {isSignupMode && <p className="mt-5 text-center text-xs text-[#b3c3b4]">Account creation includes a 5 SC promotional signup bonus. Redemption and live gameplay are not available.</p>}
+              <p className="mt-6 border-t border-[#52624e]/50 pt-5 text-center text-xs text-[#94a795]">18+ · Development preview · No live games or redemptions</p>
+            </section>
+          </div>
         </div>
-      </div>
+      </main>
     );
   }
 
