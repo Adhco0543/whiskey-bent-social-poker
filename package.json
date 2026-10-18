@@ -12,7 +12,8 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "start": "npm run start --workspace=@whiskey-bent/api"
   },
   "devDependencies": {
     "prettier": "^3.3.3",
