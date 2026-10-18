@@ -15,8 +15,8 @@ export class BonusController {
   @Get('can-claim')
   @UseGuards(AuthGuard('jwt'))
   async canClaimDailyBonus(@Request() req: any) {
-    const canClaim = await this.bonusService.canClaimDailyBonus(req.user.userId);
-    return { canClaim };
+    const status = await this.bonusService.getDailyRewardStatus(req.user.userId);
+    return status;
   }
 
   @Get('history')
