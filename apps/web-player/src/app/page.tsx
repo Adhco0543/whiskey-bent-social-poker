@@ -127,10 +127,10 @@ export default function Home() {
 
   if (!token) {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-[#160b08] text-[#f6f1e4]">
+      <main className="whiskey-lettering relative min-h-screen overflow-hidden bg-[#160b08] text-[#f6f1e4]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_25%_25%,_#643018_0%,_transparent_52%)]" />
         <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-5">
-          <header className="relative -mx-5 overflow-hidden border-b border-[#bfa267]/30 bg-[#120906]">
+          <header className="whiskey-gold-frame relative -mx-5 mt-3 overflow-hidden rounded-xl bg-[#120906]">
             <img
               src="https://raw.githubusercontent.com/Adhco0543/whiskey-bent-social-poker/main/a_dramatic_cinematic_ultra_detailed_photorealis.png"
               alt="Whiskey Bent original approved Western casino artwork with gold lettering, bourbon bottle, cowboy hat, aces and poker chips"
@@ -141,14 +141,14 @@ export default function Home() {
           <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
             <section className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.32em] text-[#d8b975]">Welcome to the room</p>
-              <h1 className="brand-script mt-5 text-6xl leading-[1.25] sm:text-7xl lg:text-8xl">Where the<br/><span className="text-[#e0c181]">Cards</span> Fall</h1>
+              <h1 className="mt-5 text-5xl font-extrabold leading-[1.25] sm:text-6xl lg:text-7xl">Where the<br/><span className="text-[#e0c181]">Cards</span> Fall</h1>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#bfcec0]">Your next favorite game is taking shape. Explore Whiskey Bent as we build social poker, casino-style games, and more.</p>
               <p className="mt-5 text-sm text-[#a9bba9]">♣ Poker planned &nbsp; • &nbsp; ♦ Casino-style games coming soon</p>
             </section>
 
-            <section aria-label="Account access" className="w-full max-w-lg justify-self-center rounded-3xl border border-[#bda064]/35 bg-[#26160f]/95 p-6 shadow-2xl sm:p-9">
+            <section aria-label="Account access" className="whiskey-gold-frame w-full max-w-lg justify-self-center rounded-3xl bg-[#26160f]/95 p-6 sm:p-9">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#d4b576]">Players club</p>
-              <h2 className="brand-script mt-3 text-5xl leading-tight">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
+              <h2 className="mt-3 text-4xl font-extrabold leading-tight sm:text-5xl">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
               <p className="mt-2 text-sm text-[#adbdad]">{isSignupMode ? 'Create your account to explore the preview.' : 'Sign in to your Whiskey Bent account.'}</p>
               <div className="mt-7 grid grid-cols-2 gap-2 rounded-xl bg-[#170d09] p-1">
                 <button type="button" onClick={() => { setIsSignupMode(false); setMessage(''); }} className={`rounded-lg px-4 py-3 text-sm font-bold transition ${!isSignupMode ? 'bg-[#d2a45c] text-[#10140f]' : 'text-[#b8c7b9] hover:bg-[#24352a]'}`}>Log in</button>
@@ -171,7 +171,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#160b08] text-[#f5f1e7]">
+    <main className="whiskey-lettering min-h-screen bg-[#160b08] text-[#f5f1e7]">
       <div className="border-b border-[#c99b52]/20 bg-[#20110c]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5">
           <div className="shrink-0">
@@ -189,7 +189,7 @@ export default function Home() {
           <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full border-[28px] border-[#d7b56c]/10" />
           <div className="relative max-w-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0c587]">The table is being set</p>
-            <h2 className="brand-script mt-4 text-6xl leading-tight sm:text-7xl">Your Seat.<br/><span className="text-[#dfc07b]">Your Game.</span></h2>
+            <h2 className="mt-4 text-5xl font-extrabold leading-tight sm:text-6xl">Your Seat.<br/><span className="text-[#dfc07b]">Your Game.</span></h2>
             <p className="mt-4 max-w-lg text-[#d2ddd2]">A new social gaming destination is taking shape. Explore our poker lobby preview while we prepare more games for testing.</p>
             <div className="mt-6 inline-flex rounded-full border border-[#d9b977]/40 bg-black/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#e9d49e]">♣ Preview mode · No live tables yet</div>
           </div>
