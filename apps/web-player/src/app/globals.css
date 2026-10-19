@@ -24,7 +24,7 @@
 .whiskey-lettering button,
 .whiskey-lettering label,
 .whiskey-lettering nav {
-  font-family: 'Cinzel', Georgia, serif;
+  font-family: 'Great Vibes', 'Brush Script MT', 'Segoe Script', cursive;
   letter-spacing: 0.015em;
 }
 .whiskey-lettering input {
@@ -35,4 +35,17 @@
 .whiskey-gold-frame {
   border: 7px ridge #e3b65a;
   box-shadow: inset 0 0 0 2px #503011, inset 0 0 0 4px rgba(255,222,143,.45), 0 0 0 2px #55310f, 0 12px 35px rgba(0,0,0,.6), 0 0 22px rgba(219,157,49,.22);
+}
+
+/* Decorative header-inspired metallic treatment for display copy. */
+.whiskey-display {
+  font-family: 'Great Vibes', 'Brush Script MT', 'Segoe Script', cursive;
+  font-weight: 400;
+  letter-spacing: .015em;
+  line-height: 1.35;
+  background: linear-gradient(180deg, #fff3c1 5%, #f5d783 27%, #b7792e 49%, #f8d98d 62%, #9b5a19 89%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(1px 2px 0 #4d260b) drop-shadow(0 4px 3px rgba(0,0,0,.8));
 }
