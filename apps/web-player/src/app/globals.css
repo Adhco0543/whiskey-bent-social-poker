@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Great+Vibes&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,4 +8,31 @@
   font-family: 'Great Vibes', 'Brush Script MT', 'Segoe Script', cursive;
   font-weight: 400;
   letter-spacing: 0.015em;
+}
+
+/* The header artwork's engraved, warm metallic lettering is the visual reference. */
+.whiskey-lettering {
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 0.035em;
+  color: #f5d48b;
+  text-shadow: 0 1px 0 #8d5a20, 0 2px 0 #633b15, 0 3px 9px rgba(0,0,0,.7);
+}
+.whiskey-lettering h1,
+.whiskey-lettering h2,
+.whiskey-lettering h3,
+.whiskey-lettering h4,
+.whiskey-lettering button,
+.whiskey-lettering label,
+.whiskey-lettering nav {
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 0.04em;
+}
+.whiskey-lettering input {
+  font-family: Georgia, serif;
+  letter-spacing: .02em;
+}
+.whiskey-lettering input::placeholder { color: #bca67f; opacity: .85; }
+.whiskey-gold-frame {
+  border: 7px ridge #e3b65a;
+  box-shadow: inset 0 0 0 2px #503011, inset 0 0 0 4px rgba(255,222,143,.45), 0 0 0 2px #55310f, 0 12px 35px rgba(0,0,0,.6), 0 0 22px rgba(219,157,49,.22);
 }
