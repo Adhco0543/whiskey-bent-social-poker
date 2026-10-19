@@ -141,14 +141,14 @@ export default function Home() {
           <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
             <section className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.32em] text-[#d8b975]">Welcome to the room</p>
-              <h1 className="mt-5 text-5xl font-extrabold leading-[1.25] sm:text-6xl lg:text-7xl">Where the<br/><span className="text-[#e0c181]">Cards</span> Fall</h1>
+              <h1 className="whiskey-display mt-5 text-6xl sm:text-7xl lg:text-8xl">Where the<br/><span>Cards</span> Fall</h1>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#bfcec0]">Your next favorite game is taking shape. Explore Whiskey Bent as we build social poker, casino-style games, and more.</p>
               <p className="mt-5 text-sm text-[#a9bba9]">♣ Poker planned &nbsp; • &nbsp; ♦ Casino-style games coming soon</p>
             </section>
 
             <section aria-label="Account access" className="whiskey-gold-frame w-full max-w-lg justify-self-center rounded-3xl bg-[#26160f]/95 p-6 sm:p-9">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#d4b576]">Players club</p>
-              <h2 className="mt-3 text-4xl font-extrabold leading-tight sm:text-5xl">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
+              <h2 className="whiskey-display mt-3 text-5xl sm:text-6xl">{isSignupMode ? 'Join the table' : 'Welcome back'}</h2>
               <p className="mt-2 text-sm text-[#adbdad]">{isSignupMode ? 'Create your account to explore the preview.' : 'Sign in to your Whiskey Bent account.'}</p>
               <div className="mt-7 grid grid-cols-2 gap-2 rounded-xl bg-[#170d09] p-1">
                 <button type="button" onClick={() => { setIsSignupMode(false); setMessage(''); }} className={`rounded-lg px-4 py-3 text-sm font-bold transition ${!isSignupMode ? 'bg-[#d2a45c] text-[#10140f]' : 'text-[#b8c7b9] hover:bg-[#24352a]'}`}>Log in</button>
@@ -189,7 +189,7 @@ export default function Home() {
           <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full border-[28px] border-[#d7b56c]/10" />
           <div className="relative max-w-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e0c587]">The table is being set</p>
-            <h2 className="mt-4 text-5xl font-extrabold leading-tight sm:text-6xl">Your Seat.<br/><span className="text-[#dfc07b]">Your Game.</span></h2>
+            <h2 className="whiskey-display mt-4 text-6xl sm:text-7xl">Your Seat.<br/><span>Your Game.</span></h2>
             <p className="mt-4 max-w-lg text-[#d2ddd2]">A new social gaming destination is taking shape. Explore our poker lobby preview while we prepare more games for testing.</p>
             <div className="mt-6 inline-flex rounded-full border border-[#d9b977]/40 bg-black/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#e9d49e]">♣ Preview mode · No live tables yet</div>
           </div>
