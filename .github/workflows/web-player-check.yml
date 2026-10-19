@@ -1,0 +1,33 @@
+name: Player UI check
+
+on:
+  pull_request:
+    paths:
+      - 'apps/web-player/**'
+      - 'packages/ui/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/web-player-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build shared UI
+        run: npm run build --workspace=@whiskey-bent/ui
+      - name: Type-check player
+        run: npx tsc --project apps/web-player/tsconfig.json --noEmit --incremental false
+      - name: Build player site
+        run: npm run build --workspace=@whiskey-bent/web-player
